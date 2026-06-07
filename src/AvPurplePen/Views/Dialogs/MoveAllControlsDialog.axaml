@@ -1,0 +1,65 @@
+<!--
+    MoveAllControlsDialog.axaml
+    Simple dialog to select the transformation action for moving all controls.
+    Ported from WinForms PurplePen/MoveAllControls.cs.
+-->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PurplePen.ViewModels"
+        xmlns:resx="using:AvPurplePen"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        d:DesignWidth="350" d:DesignHeight="200"
+        x:Class="AvPurplePen.Views.MoveAllControlsDialog"
+        Classes="dialog"
+        x:DataType="vm:MoveAllControlsDialogViewModel"
+        Title="{resx:Localize MoveAllControlsDialog_Text}"
+        Icon="/Assets/transparent.ico"
+        Width="350" SizeToContent="Height"
+        CanResize="False"
+        CanMinimize="False"
+        CanMaximize="False"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+
+    <Design.DataContext>
+        <vm:MoveAllControlsDialogViewModel/>
+    </Design.DataContext>
+
+    <DockPanel>
+        <!-- OK / Cancel buttons -->
+        <Border DockPanel.Dock="Bottom"
+                BorderThickness="0,1,0,0"
+                BorderBrush="#E0E0E0"
+                Padding="12,8">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="8">
+                <Button x:Name="okButton"
+                        Content="{resx:Localize OKButton}"
+                        Width="85" HorizontalContentAlignment="Center"
+                        IsDefault="True"
+                        Click="OkButton_Click"/>
+                <Button x:Name="cancelButton"
+                        Content="{resx:Localize CancelButton}"
+                        Width="85" HorizontalContentAlignment="Center"
+                        IsCancel="True"
+                        Click="CancelButton_Click"/>
+            </StackPanel>
+        </Border>
+
+        <Grid Margin="12" RowDefinitions="Auto,Auto">
+            <!-- Description label -->
+            <TextBlock Grid.Row="0"
+                       Text="{resx:Localize MoveAllControlsDialog_labelDescription_Text}"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,12"/>
+
+            <!-- Action ComboBox -->
+            <ComboBox Grid.Row="1"
+                      x:Name="actionComboBox"
+                      HorizontalAlignment="Stretch"/>
+        </Grid>
+    </DockPanel>
+</Window>

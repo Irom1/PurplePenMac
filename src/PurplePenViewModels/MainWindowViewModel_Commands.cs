@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using PurplePen;
+using PurplePen.Graphics2D;
 using PurplePen.MapModel;
 
 namespace PurplePen.ViewModels
@@ -656,9 +657,10 @@ namespace PurplePen.ViewModels
         /// Executes the Add/Text command. Shows the Change Text dialog for adding text.
         /// </summary>
         [RelayCommand]
-        private void AddText()
+        private async Task AddText()
         {
-#if !PORTING
+            if (controller == null) return;
+
             short colorOcadId;
             float c, m, y, k;
             bool purpleOverprint;
@@ -670,24 +672,25 @@ namespace PurplePen.ViewModels
 
             FindPurple.GetPurpleColor(mapDisplay, controller.GetCourseAppearance(), out colorOcadId, out c, out m, out y, out k, out purpleOverprint);
 
-            ChangeText dialog = new ChangeText(MiscText.AddTextSpecialTitle, MiscText.AddTextSpecialExplanation, true,
-                                               CmykColor.FromCmyk(c, m, y, k), controller.ExpandText);
-            dialog.HelpTopic = "EditAddText.htm";
+            var vm = new ChangeTextDialogViewModel {
+                Title = MiscText.AddTextSpecialTitle,
+                Explanation = MiscText.AddTextSpecialExplanation,
+                ShowInsertSpecial = true
+            };
+            vm.InitializeColors(CmykColor.FromCmyk(c, m, y, k));
 
             controller.GetAddTextDefaultProperties(out fontName, out fontBold, out fontItalic, out fontColor, out fontHeight, out fontAutoSize);
-            dialog.FontName = fontName;
-            dialog.FontBold = fontBold;
-            dialog.FontItalic = fontItalic;
-            dialog.FontColor = fontColor;
-            dialog.FontSize = fontHeight;
-            dialog.FontSizeAutomatic = fontAutoSize;
+            vm.FontName = fontName;
+            vm.FontBold = fontBold;
+            vm.FontItalic = fontItalic;
+            vm.FontSize = (decimal)(fontHeight < 0 ? 5.0f : fontHeight);
+            vm.FontSizeAutomatic = fontAutoSize;
+            vm.SetSelectedColor(fontColor);
 
-            if (dialog.ShowDialog(this) == DialogResult.OK) {
-                controller.BeginAddTextSpecialMode(dialog.UserText, dialog.FontName, dialog.FontBold, dialog.FontItalic, dialog.FontColor, dialog.FontSizeAutomatic ? -1 : dialog.FontSize);
+            if (await Services.DialogService.ShowDialogAsync(vm)) {
+                controller.BeginAddTextSpecialMode(vm.UserText, vm.FontName, vm.FontBold, vm.FontItalic,
+                    vm.GetSelectedColor(), vm.FontSizeAutomatic ? -1f : (float)vm.FontSize);
             }
-
-            dialog.Dispose();
-#endif
         }
 
         /// <summary>
@@ -878,39 +881,41 @@ namespace PurplePen.ViewModels
         /// Executes the Item/Change Text command. Shows the Change Text dialog.
         /// </summary>
         [RelayCommand]
-        private void ChangeText()
+        private async Task ChangeText()
         {
-#if !PORTING
-            if (controller.CanChangeText() == CommandStatus.Enabled) {
-                short colorOcadId;
-                float c, m, y, k;
-                bool purpleOverprint;
-                string fontName;
-                bool fontBold, fontItalic;
-                float fontHeight;
-                SpecialColor fontColor;
-                FindPurple.GetPurpleColor(mapDisplay, controller.GetCourseAppearance(), out colorOcadId, out c, out m, out y, out k, out purpleOverprint);
+            if (controller == null) return;
+            if (controller.CanChangeText() != CommandStatus.Enabled) return;
 
-                string oldText = controller.GetChangableText();
-                controller.GetChangableTextProperties(out fontName, out fontBold, out fontItalic, out fontColor, out fontHeight);
-                ChangeText dialog = new ChangeText(MiscText.ChangeTextTitle, MiscText.ChangeTextSpecialExplanation, true,
-                                                   CmykColor.FromCmyk(c, m, y, k), controller.ExpandText);
-                dialog.HelpTopic = "ItemChangeText.htm";
-                dialog.UserText = oldText;
-                dialog.FontName = fontName;
-                dialog.FontBold = fontBold;
-                dialog.FontItalic = fontItalic;
-                dialog.FontColor = fontColor;
-                dialog.FontSize = (fontHeight < 0) ? 5 : fontHeight;
-                dialog.FontSizeAutomatic = (fontHeight < 0);
+            short colorOcadId;
+            float c, m, y, k;
+            bool purpleOverprint;
+            string fontName;
+            bool fontBold, fontItalic;
+            float fontHeight;
+            SpecialColor fontColor;
+            FindPurple.GetPurpleColor(mapDisplay, controller.GetCourseAppearance(), out colorOcadId, out c, out m, out y, out k, out purpleOverprint);
 
-                if (dialog.ShowDialog(this) == DialogResult.OK) {
-                    controller.ChangeText(dialog.UserText, dialog.FontName, dialog.FontBold, dialog.FontItalic, dialog.FontColor, dialog.FontSizeAutomatic ? -1 : dialog.FontSize);
-                }
+            string oldText = controller.GetChangableText();
+            controller.GetChangableTextProperties(out fontName, out fontBold, out fontItalic, out fontColor, out fontHeight);
 
-                dialog.Dispose();
+            var vm = new ChangeTextDialogViewModel {
+                Title = MiscText.ChangeTextTitle,
+                Explanation = MiscText.ChangeTextSpecialExplanation,
+                ShowInsertSpecial = true,
+                UserText = oldText,
+                FontName = fontName,
+                FontBold = fontBold,
+                FontItalic = fontItalic,
+                FontSize = (decimal)(fontHeight < 0 ? 5f : fontHeight),
+                FontSizeAutomatic = (fontHeight < 0)
+            };
+            vm.InitializeColors(CmykColor.FromCmyk(c, m, y, k));
+            vm.SetSelectedColor(fontColor);
+
+            if (await Services.DialogService.ShowDialogAsync(vm)) {
+                controller.ChangeText(vm.UserText, vm.FontName, vm.FontBold, vm.FontItalic,
+                    vm.GetSelectedColor(), vm.FontSizeAutomatic ? -1f : (float)vm.FontSize);
             }
-#endif
         }
 
         /// <summary>

@@ -1,0 +1,157 @@
+<!--
+    ChangeTextDialog.axaml
+    Dialog for adding or editing text specials on the map.
+    Provides text entry, font selection, bold/italic, font size,
+    color selection (presets + custom CMYK), and special text macros.
+    Ported from WinForms PurplePen/ChangeText.cs.
+-->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PurplePen.ViewModels"
+        xmlns:resx="using:AvPurplePen"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        d:DesignWidth="500" d:DesignHeight="520"
+        x:Class="AvPurplePen.Views.ChangeTextDialog"
+        Classes="dialog"
+        x:DataType="vm:ChangeTextDialogViewModel"
+        Title="{Binding Title}"
+        Icon="/Assets/transparent.ico"
+        Width="500" Height="520"
+        CanResize="True"
+        CanMinimize="False"
+        CanMaximize="False"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+
+    <Design.DataContext>
+        <vm:ChangeTextDialogViewModel/>
+    </Design.DataContext>
+
+    <DockPanel>
+        <!-- OK / Cancel buttons at bottom -->
+        <Border DockPanel.Dock="Bottom"
+                BorderThickness="0,1,0,0"
+                BorderBrush="#E0E0E0"
+                Padding="12,8">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="8">
+                <Button x:Name="okButton"
+                        Content="{resx:Localize OKButton}"
+                        Width="85" HorizontalContentAlignment="Center"
+                        IsDefault="True"
+                        IsEnabled="{Binding IsUserTextValid}"
+                        Click="OkButton_Click"/>
+                <Button x:Name="cancelButton"
+                        Content="{resx:Localize CancelButton}"
+                        Width="85" HorizontalContentAlignment="Center"
+                        IsCancel="True"
+                        Click="CancelButton_Click"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Main content -->
+        <Grid Margin="12" RowDefinitions="Auto,Auto,*,Auto,Auto,Auto,Auto">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="200"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Explanation label (spans both columns) -->
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+                       Text="{Binding Explanation}"
+                       TextWrapping="Wrap"
+                       Margin="0,0,0,8"/>
+
+            <!-- Text entry box (spans both columns) -->
+            <TextBox Grid.Row="1" Grid.ColumnSpan="2"
+                     x:Name="textBoxMain"
+                     Text="{Binding UserText, Mode=TwoWay}"
+                     AcceptsReturn="True"
+                     Height="70"
+                     Margin="0,0,0,8"/>
+
+            <!-- Font list -->
+            <HeaderedContentControl Grid.Row="2" Grid.Column="0"
+                                   Header="Font"
+                                   Margin="0,0,4,4">
+                <ListBox x:Name="listBoxFonts"
+                         ItemsSource="{Binding AvailableFonts}"
+                         SelectedItem="{Binding FontName, Mode=TwoWay}"
+                         Margin="4"/>
+            </HeaderedContentControl>
+
+            <!-- Right side: font style, size, color -->
+            <StackPanel Grid.Row="2" Grid.Column="1" Spacing="4">
+                <!-- Bold -->
+                <CheckBox x:Name="checkBoxBold"
+                          Content="Bold"
+                          IsChecked="{Binding FontBold, Mode=TwoWay}"/>
+                <!-- Italic -->
+                <CheckBox x:Name="checkBoxItalic"
+                          Content="Italic"
+                          IsChecked="{Binding FontItalic, Mode=TwoWay}"/>
+
+                <!-- Font size -->
+                <Grid ColumnDefinitions="Auto,*" Margin="0,8,0,0">
+                    <TextBlock Grid.Column="0"
+                               Text="Size:"
+                               VerticalAlignment="Center"
+                               Margin="0,0,4,0"/>
+                    <NumericUpDown Grid.Column="1"
+                                   Value="{Binding FontSize, Mode=TwoWay}"
+                                   IsEnabled="{Binding FontSizeEnabled}"
+                                   Minimum="1" Maximum="100"
+                                   Increment="0.1m"/>
+                </Grid>
+
+                <!-- Auto font size -->
+                <CheckBox x:Name="checkBoxAutoFontSize"
+                          Content="Automatic"
+                          IsChecked="{Binding FontSizeAutomatic, Mode=TwoWay}"/>
+
+                <!-- Color ComboBox -->
+                <TextBlock Text="Color:" Margin="0,8,0,0"/>
+                <ComboBox x:Name="comboBoxColor"
+                          SelectedIndex="{Binding SelectedColorIndex, Mode=TwoWay}"/>
+
+                <!-- Custom CMYK color controls -->
+                <Grid IsVisible="{Binding IsCustomColor}"
+                      ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto"
+                      Margin="12,4,0,0">
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="C:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <NumericUpDown Grid.Row="0" Grid.Column="1"
+                                   Value="{Binding CustomCyan, Mode=TwoWay}"
+                                   Minimum="0" Maximum="100"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="M:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <NumericUpDown Grid.Row="1" Grid.Column="1"
+                                   Value="{Binding CustomMagenta, Mode=TwoWay}"
+                                   Minimum="0" Maximum="100"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Y:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <NumericUpDown Grid.Row="2" Grid.Column="1"
+                                   Value="{Binding CustomYellow, Mode=TwoWay}"
+                                   Minimum="0" Maximum="100"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="K:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <NumericUpDown Grid.Row="3" Grid.Column="1"
+                                   Value="{Binding CustomBlack, Mode=TwoWay}"
+                                   Minimum="0" Maximum="100"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- Insert Special button row -->
+            <Grid Grid.Row="3" Grid.ColumnSpan="2"
+                  IsVisible="{Binding ShowInsertSpecial}"
+                  Margin="0,8,0,4">
+                <Button x:Name="insertSpecialButton"
+                        Content="{resx:Localize ChangeTextDialog_insertSpecialButton_Text}"
+                        HorizontalAlignment="Left"
+                        Click="InsertSpecialButton_Click"/>
+            </Grid>
+        </Grid>
+    </DockPanel>
+</Window>

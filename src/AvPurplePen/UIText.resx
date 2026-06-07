@@ -3878,103 +3878,25 @@ For printing competition maps, it is suggested that courses be exported to OCAD 
   <data name="MapIssueChoiceDialog_startTriangleButton_Detail" xml:space="preserve">
     <value>The map is issued at the start triangle (where navigation begins).</value>
   </data>
-  <!-- CourseAppearanceDialog -->
-  <data name="CourseAppearanceDialog_Text" xml:space="preserve">
-    <value>Customize Appearance</value>
+  <!-- OverwritingOcadFilesDialog -->
+  <data name="OverwritingOcadFilesDialog_Text" xml:space="preserve">
+    <value>Confirm Replace Files</value>
   </data>
-  <data name="CourseAppearanceDialog_groupBoxSizes_Text" xml:space="preserve">
-    <value>Item Sizes</value>
+  <data name="OverwritingOcadFilesDialog_confirmReplaceLabel_Text" xml:space="preserve">
+    <value>The following files already exist. If you continue, they will be replaced.</value>
   </data>
-  <data name="CourseAppearanceDialog_checkBoxStandardSizes_Text" xml:space="preserve">
-    <value>Use IOF standard sizes</value>
+  <data name="OverwritingOcadFilesDialog_buttonOK_Text" xml:space="preserve">
+    <value>Replace</value>
   </data>
-  <data name="CourseAppearanceDialog_labelControlCircle_Text" xml:space="preserve">
-    <value>Control circle diameter:</value>
+  <!-- ChangeTextDialog -->
+  <data name="ChangeTextDialog_insertSpecialButton_Text" xml:space="preserve">
+    <value>Insert Special</value>
   </data>
-  <data name="CourseAppearanceDialog_labelLineWidth_Text" xml:space="preserve">
-    <value>Line width:</value>
+  <!-- MoveAllControlsDialog -->
+  <data name="MoveAllControlsDialog_Text" xml:space="preserve">
+    <value>Move All Controls</value>
   </data>
-  <data name="CourseAppearanceDialog_labelCenterDot_Text" xml:space="preserve">
-    <value>Center dot diameter:</value>
-  </data>
-  <data name="CourseAppearanceDialog_labelControlNumber_Text" xml:space="preserve">
-    <value>Control number height:</value>
-  </data>
-  <data name="CourseAppearanceDialog_labelControlNumberStyle_Text" xml:space="preserve">
-    <value>Control number style:</value>
-  </data>
-  <data name="CourseAppearanceDialog_labelOutlineWidth_Text" xml:space="preserve">
-    <value>White outline around numbers:</value>
-  </data>
-  <data name="CourseAppearanceDialog_labelAutoGapSize_Text" xml:space="preserve">
-    <value>Automatic leg gap size:</value>
-  </data>
-  <data name="CourseAppearanceDialog_labelScaleItemSizes_Text" xml:space="preserve">
-    <value>Scale item sizes:</value>
-  </data>
-  <data name="CourseAppearanceDialog_groupBoxPurple_Text" xml:space="preserve">
-    <value>Purple Color</value>
-  </data>
-  <data name="CourseAppearanceDialog_checkBoxDefaultPurple_Text" xml:space="preserve">
-    <value>Use purple color from map</value>
-  </data>
-  <data name="CourseAppearanceDialog_labelCyan_Text" xml:space="preserve">
-    <value>Cyan:</value>
-  </data>
-  <data name="CourseAppearanceDialog_labelMagenta_Text" xml:space="preserve">
-    <value>Magenta:</value>
-  </data>
-  <data name="CourseAppearanceDialog_labelYellow_Text" xml:space="preserve">
-    <value>Yellow:</value>
-  </data>
-  <data name="CourseAppearanceDialog_labelBlack_Text" xml:space="preserve">
-    <value>Black:</value>
-  </data>
-  <data name="CourseAppearanceDialog_labelBlendPurple_Text" xml:space="preserve">
-    <value>Blend purple with underlying map colors:</value>
-  </data>
-  <data name="CourseAppearanceDialog_labelChooseLayer_Text" xml:space="preserve">
-    <value>Above map layer:</value>
-  </data>
-  <data name="CourseAppearanceDialog_groupBoxPreview_Text" xml:space="preserve">
-    <value>Preview</value>
-  </data>
-  <data name="CourseAppearanceDialog_groupBox1_Text" xml:space="preserve">
-    <value>Control Descriptions</value>
-  </data>
-  <data name="CourseAppearanceDialog_labelDescriptionColor_Text" xml:space="preserve">
-    <value>Color:</value>
-  </data>
-  <data name="CourseAppearanceDialog_groupBoxOcadMap_Text" xml:space="preserve">
-    <value>Advanced</value>
-  </data>
-  <data name="CourseAppearanceDialog_checkBoxOverprint_Text" xml:space="preserve">
-    <value>Use overprint effect for colors marked "overprint"</value>
-  </data>
-  <!-- PunchcardLayoutDialog -->
-  <data name="PunchcardLayoutDialog_Text" xml:space="preserve">
-    <value>Punch Card Layout</value>
-  </data>
-  <data name="PunchcardLayoutDialog_boxOrderGroupBox_Text" xml:space="preserve">
-    <value>Box Order</value>
-  </data>
-  <data name="PunchcardLayoutDialog_sizeGroupBox_Text" xml:space="preserve">
-    <value>Size</value>
-  </data>
-  <data name="PunchcardLayoutDialog_columnsLabel_Text" xml:space="preserve">
-    <value>Columns:</value>
-  </data>
-  <data name="PunchcardLayoutDialog_rowsLabel_Text" xml:space="preserve">
-    <value>Rows:</value>
-  </data>
-  <!-- PunchPatternDialog -->
-  <data name="PunchPatternDialog_Text" xml:space="preserve">
-    <value>Punch Patterns</value>
-  </data>
-  <data name="PunchPatternDialog_punchPatternsLabel_Text" xml:space="preserve">
-    <value>Click on a control code in the left-side list, and design the punch pattern in the right side. Red codes indicate controls that have no punch pattern defined.</value>
-  </data>
-  <data name="PunchPatternDialog_formatButton_Text" xml:space="preserve">
-    <value>Punch Card Layout...</value>
+  <data name="MoveAllControlsDialog_labelDescription_Text" xml:space="preserve">
+    <value>Select how to move all controls:</value>
   </data>
 </root>

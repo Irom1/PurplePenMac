@@ -1,0 +1,61 @@
+<!--
+    OverwritingOcadFilesDialog.axaml
+    Confirmation dialog shown before overwriting existing files during export.
+    Displays a list of files with Replace/Cancel buttons.
+    Ported from WinForms PurplePen/OverwritingOcadFilesDialog.cs.
+-->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PurplePen.ViewModels"
+        xmlns:resx="using:AvPurplePen"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        d:DesignWidth="379" d:DesignHeight="295"
+        x:Class="AvPurplePen.Views.OverwritingOcadFilesDialog"
+        Classes="dialog"
+        x:DataType="vm:OverwritingOcadFilesDialogViewModel"
+        Title="{resx:Localize OverwritingOcadFilesDialog_Text}"
+        Icon="/Assets/transparent.ico"
+        Width="379" Height="295"
+        CanResize="True"
+        CanMinimize="False"
+        CanMaximize="False"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False">
+
+    <Design.DataContext>
+        <vm:OverwritingOcadFilesDialogViewModel/>
+    </Design.DataContext>
+
+    <Grid Margin="12" RowDefinitions="Auto,*,Auto">
+        <!-- Warning label -->
+        <TextBlock Grid.Row="0"
+                   Text="{Binding Message}"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,12"/>
+
+        <!-- File list -->
+        <ListBox Grid.Row="1"
+                 x:Name="listBoxFiles"
+                 ItemsSource="{Binding Filenames}"/>
+
+        <!-- OK/Cancel buttons -->
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="10"
+                    Margin="0,12,0,0">
+            <Button x:Name="buttonOK"
+                    Content="{resx:Localize OverwritingOcadFilesDialog_buttonOK_Text}"
+                    Width="111" Height="25"
+                    HorizontalContentAlignment="Center"
+                    Click="ButtonOK_Click"/>
+            <Button x:Name="buttonCancel"
+                    Content="{resx:Localize CancelButton}"
+                    Width="111" Height="25"
+                    HorizontalContentAlignment="Center"
+                    Click="ButtonCancel_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
