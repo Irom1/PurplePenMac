@@ -1,0 +1,62 @@
+<!--
+    LicenseDialog.axaml
+
+    Displays the Purple Pen BSD license text in a scrollable, read-only area,
+    with a link to the Wikipedia BSD License page and an OK button to dismiss.
+
+    Migrated from WinForms PurplePen/LicenseForm.cs.
+-->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:resx="using:AvPurplePen"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        d:DesignWidth="502" d:DesignHeight="354"
+        x:Class="AvPurplePen.Views.LicenseDialog"
+        Classes="dialog"
+        Title="{resx:Localize LicenseForm_Text}"
+        Width="502" Height="354"
+        CanResize="True"
+        CanMaximize="False"
+        CanMinimize="False"
+        Icon="/Assets/transparent.ico"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        SystemDecorations="Full">
+
+    <DockPanel Margin="12">
+
+        <!-- Bottom row: BSD link label on the left, OK button on the right -->
+        <Grid DockPanel.Dock="Bottom"
+              Margin="0,8,0,0"
+              ColumnDefinitions="*,Auto">
+
+            <Button x:Name="bsdLicenseLinkButton"
+                    Grid.Column="0"
+                    Content="{resx:Localize LicenseForm_bsdLicenseLinkLabel_Text}"
+                    HorizontalAlignment="Left"
+                    HorizontalContentAlignment="Left"
+                    Classes="hyperlink"
+                    Click="BsdLicenseLinkButton_Click"/>
+
+            <Button x:Name="okButton"
+                    Grid.Column="1"
+                    Content="{resx:Localize LicenseForm_okButton_Text}"
+                    MinWidth="80"
+                    HorizontalContentAlignment="Center"
+                    IsDefault="True"
+                    Click="OkButton_Click"/>
+        </Grid>
+
+        <!-- License text fills the remaining space -->
+        <ScrollViewer>
+            <SelectableTextBlock x:Name="licenseTextBlock"
+                                 TextWrapping="Wrap"
+                                 FontFamily="Times New Roman"
+                                 FontSize="13"/>
+        </ScrollViewer>
+
+    </DockPanel>
+
+</Window>
