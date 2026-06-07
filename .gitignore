@@ -120,3 +120,4 @@ src/MsftStoreInstaller/AppPackages/
 loc/po/tar/
 /src/Help/output/Purple Pen Help.log
 /src/TestFiles/controller/ocad_create10/Lincoln-CMYK.gif
+.vscode/
