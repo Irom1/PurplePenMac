@@ -359,6 +359,8 @@ namespace AvPurplePen.Views
             if (DataContext is MainWindowViewModel vm) {
                 vm.CloseRequested += (_, _) => Close();
                 vm.ShowRectangleCallback = bounds => mapViewer.ShowRectangle(bounds);
+                // Wire up banner visibility scroll callback
+                vm.CoursePartBannerViewModel.ScrollMapCallback = _ => { /* handled by layout */ };
             }
         }
 

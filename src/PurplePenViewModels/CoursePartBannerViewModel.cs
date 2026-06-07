@@ -103,12 +103,20 @@ namespace PurplePen.ViewModels
             }
         }
 
+        /// <summary>
+        /// Callback to adjust the map viewer scroll when the banner visibility changes.
+        /// Set by the MainWindow to scroll the map so content stays in place.
+        /// </summary>
+        public Action<int>? ScrollMapCallback { get; set; }
+
         partial void OnBannerVisibleChanged(bool oldValue, bool newValue)
         {
-#if !PORTING
-            // TODO: When the banner visibility changes, we should scroll the map view so it appears 
-            // in the same place. See MainFrame.SetBannerVisibility() for details.
-#endif
+            if (ScrollMapCallback != null) {
+                // Banner height is approximately 40px. Scroll map by half to keep
+                // content in the same visual position (matches WinForms behavior).
+                int offset = newValue ? -20 : 20;
+                ScrollMapCallback(offset);
+            }
         }
 
         // Show the Course Part Properties dialog for the currently-selected part
