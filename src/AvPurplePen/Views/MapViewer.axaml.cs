@@ -426,6 +426,16 @@ public partial class MapViewer : UserControl
             bounds.Y + bounds.Height / 2.0);
     }
 
+    /// <summary>
+    /// Begins a map panning/dragging operation at the given logical-pixel coordinates.
+    /// Used by the controller (via IUserInterface.InitiateMapDragging) to start
+    /// programmatic drag operations.
+    /// </summary>
+    public void BeginMapDragging(Point logicalPosition, MouseButton endingButton)
+    {
+        panAndZoom.BeginPanning(logicalPosition, endingButton);
+    }
+
     // Cancels any drags currently in progress and raises DragCancel for each.
     public void CancelAllDrags()
     {

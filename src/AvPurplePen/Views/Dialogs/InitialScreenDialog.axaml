@@ -1,0 +1,78 @@
+<!--
+    InitialScreenDialog.axaml
+    Welcome/startup screen shown before the main window.
+    Offers Create New Event, Open Existing, Open Last, Open Sample.
+    Ported from WinForms PurplePen/InitialScreen.cs.
+-->
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PurplePen.ViewModels"
+        xmlns:resx="using:AvPurplePen"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        d:DesignWidth="400" d:DesignHeight="300"
+        x:Class="AvPurplePen.Views.InitialScreenDialog"
+        Classes="dialog"
+        x:DataType="vm:InitialScreenViewModel"
+        Title="{resx:Localize InitialScreen_Text}"
+        Icon="/Assets/PurplePenIcon.png"
+        Width="400" SizeToContent="Height"
+        CanResize="False"
+        CanMinimize="False"
+        CanMaximize="False"
+        WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="True">
+
+    <Design.DataContext>
+        <vm:InitialScreenViewModel/>
+    </Design.DataContext>
+
+    <DockPanel>
+        <!-- OK / Cancel buttons -->
+        <Border DockPanel.Dock="Bottom"
+                BorderThickness="0,1,0,0"
+                BorderBrush="#E0E0E0"
+                Padding="12,8">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Spacing="8">
+                <Button x:Name="okButton"
+                        Content="{resx:Localize OKButton}"
+                        Width="85" HorizontalContentAlignment="Center"
+                        IsDefault="True"
+                        Click="OkButton_Click"/>
+                <Button x:Name="cancelButton"
+                        Content="{resx:Localize CancelButton}"
+                        Width="85" HorizontalContentAlignment="Center"
+                        IsCancel="True"
+                        Click="CancelButton_Click"/>
+            </StackPanel>
+        </Border>
+
+        <StackPanel Margin="20,16" Spacing="10">
+            <!-- Welcome text -->
+            <TextBlock Text="{resx:Localize InitialScreen_welcomeLabel_Text}"
+                       TextWrapping="Wrap"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       Margin="0,0,0,8"/>
+
+            <!-- Radio buttons — selection handled in code-behind -->
+            <RadioButton x:Name="newEventRadio"
+                         Content="{resx:Localize InitialScreen_newEventRadio_Text}"
+                         GroupName="initialAction"/>
+
+            <RadioButton x:Name="openExistingRadio"
+                         Content="{resx:Localize InitialScreen_openExistingRadio_Text}"
+                         GroupName="initialAction"/>
+
+            <RadioButton x:Name="openLastRadio"
+                         GroupName="initialAction"/>
+
+            <RadioButton x:Name="openSampleRadio"
+                         Content="{resx:Localize InitialScreen_openSampleRadio_Text}"
+                         GroupName="initialAction"/>
+        </StackPanel>
+    </DockPanel>
+</Window>

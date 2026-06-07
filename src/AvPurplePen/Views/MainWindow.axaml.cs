@@ -361,6 +361,9 @@ namespace AvPurplePen.Views
                 vm.ShowRectangleCallback = bounds => mapViewer.ShowRectangle(bounds);
                 // Wire up banner visibility scroll callback
                 vm.CoursePartBannerViewModel.ScrollMapCallback = _ => { /* handled by layout */ };
+                // Wire up map dragging callback
+                vm.InitiateMapDragCallback = (x, y, isRight) =>
+                    mapViewer.BeginMapDragging(new Avalonia.Point(x, y), isRight ? MouseButton.Right : MouseButton.Left);
             }
         }
 
@@ -454,9 +457,8 @@ namespace AvPurplePen.Views
                 break;
 
             case MapViewer.FancyMouseAction.Hover:
-#if !PORTING
-                // handle hover
-#endif
+                // Show tooltip for map elements under the cursor
+                vm.MapViewerHover(location, pixelSize);
                 break;
 
             default:

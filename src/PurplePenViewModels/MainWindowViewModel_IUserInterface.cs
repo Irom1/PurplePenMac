@@ -13,6 +13,7 @@ namespace PurplePen.ViewModels
         public void Initialize(Controller controller, SymbolDB symbolDB)
         {
             this.controller = controller;
+            this.Controller = controller;
             this.symbolDB = symbolDB;
 
             DescriptionViewerViewModel.SymbolDB = symbolDB;
@@ -233,9 +234,17 @@ namespace PurplePen.ViewModels
 #endif
         }
 
+        /// <summary>
+        /// Callback to initiate panning/dragging on the map viewer.
+        /// Set by MainWindow to wire up controller-initiated drags to the PanAndZoom control.
+        /// Parameters: x, y (pixel coordinates), isRightButton
+        /// </summary>
+        public Action<int, int, bool>? InitiateMapDragCallback { get; set; }
+
         public void InitiateMapDragging(PointF initialPos, PointerButton buttonEnd)
         {
-            //throw new NotImplementedException();
+            InitiateMapDragCallback?.Invoke((int)initialPos.X, (int)initialPos.Y,
+                buttonEnd == PointerButton.Right);
         }
 
         public int LogicalToDeviceUnits(int value)

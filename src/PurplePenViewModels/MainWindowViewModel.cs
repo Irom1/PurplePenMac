@@ -105,6 +105,20 @@ namespace PurplePen.ViewModels
         [ObservableProperty]
         MousePointerShape mapMousePointerShape = new MousePointerShape(PredefinedMousePointerShape.Arrow);
 
+        /// <summary>
+        /// The controller, set during initialization. Public for startup/initial screen access.
+        /// </summary>
+        public Controller? Controller { get; private set; }
+
+        [ObservableProperty]
+        private bool showToolTips = true;
+
+        [ObservableProperty]
+        private string hoverTooltipText = "";
+
+        [ObservableProperty]
+        private bool hasHoverTooltip;
+
         // The slider view of the zoom, which is a log-based based of the true zoom, clamped to 0-100.
         private const float zoomSliderMin = 0.25F; //25%
         private const float zoomSliderMax = 10.0F; //1000%
@@ -368,9 +382,22 @@ namespace PurplePen.ViewModels
                 controller.MouseMoved(Pane.Map, location.Value, pixelSize);
                 MapMousePointerShape = controller.GetMouseCursor(Pane.Map, location.Value, pixelSize);
             }
-#if PORTING
-            // TODO: Deal with tool tips.
-#endif
+        }
+
+        /// <summary>
+        /// Handles hover events on the map viewer — shows tooltips for map elements.
+        /// </summary>
+        public void MapViewerHover(PointF location, float pixelSize)
+        {
+            if (controller == null) return;
+            if (showToolTips && controller.GetToolTip(Pane.Map, location, pixelSize, out string tipText, out string titleText)) {
+                HoverTooltipText = string.IsNullOrEmpty(titleText) ? tipText : $"{titleText}\n{tipText}";
+                HasHoverTooltip = true;
+            }
+            else {
+                HasHoverTooltip = false;
+                HoverTooltipText = "";
+            }
         }
 
         public DragAction MapViewerLeftButtonDown(PointF location, float pixelSize)
