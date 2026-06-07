@@ -29,19 +29,42 @@ namespace PurplePen.ViewModels
     /// </summary>
     public partial class MainWindowViewModel : ViewModelBase
     {
-        /// <summary>Raised by the Exit command so the View can close the window.</summary>
-        public event System.EventHandler? CloseRequested;
-
-        /// <summary>
-        /// Set by the View so the ViewModel can request that the map viewer
-        /// scroll and zoom to show a given world-coordinate rectangle.
-        /// </summary>
-        public Action<System.Drawing.RectangleF>? ShowRectangleCallback { get; set; }
-
         Controller? controller = null;
         SymbolDB symbolDB = null!;
         long changeNum = 0;         // When this changes, state information needs to be updated in the UI.
         bool updatingTabs = false;  // Guard to prevent re-entrant controller calls during UpdateTabs.
+
+        // Settings remembered across invocations of the Create OCAD Files dialog,
+        // so the user's last choices (folder, format, prefix, etc.) are preserved.
+        // Reset to null when a new map file is loaded.
+        private OcadCreationSettings? ocadCreationSettingsPrevious;
+
+        // Same idea for the Create Image Files dialog.
+        private BitmapCreationSettings? bitmapCreationSettingsPrevious;
+
+        // Same idea for the Create GPX File dialog.
+        private GpxCreationSettings? gpxCreationSettingsPrevious;
+
+        // Same idea for the Create KML Files dialog.
+        private ExportKmlSettings? exportKmlSettingsPrevious;
+
+        // Same idea for the Create RouteGadget Files dialog.
+        private RouteGadgetCreationSettings? routeGadgetCreationSettingsPrevious;
+
+        // Same idea for the Create PDF Files dialog.
+        private CoursePdfSettings? coursePdfSettings;
+
+        // Persisted settings for the Print Descriptions / Create Description PDF
+        // dialog. The printer / paper / margins live in their own fields because
+        // the new ViewModel takes them as separate inputs.
+        private DescriptionPrintSettings? descPrintSettings;
+        private PrinterNameAndSettings? descPrinter;
+        private PrintingPaperSizeWithMargins? descPaperSizeWithMargins;
+
+        // Same idea for the Print Punch Cards / Create Punchcard PDF dialog.
+        private CorePunchPrintSettings? punchPrintSettings;
+        private PrinterNameAndSettings? punchPrinter;
+        private PrintingPaperSizeWithMargins? punchPaperSizeWithMargins;
 
         [ObservableProperty]
         private MapDisplay? mapDisplay;
@@ -160,9 +183,12 @@ namespace PurplePen.ViewModels
                 UpdatePrintArea();
                 UpdateTopologyHighlight();
                 UpdateCustomSymbolText();
-                CheckForMissingFonts();
                 CheckForNonRenderableObjects(true, false);
 #endif
+                // Warn about missing fonts (fire-and-forget — the controller
+                // reports the list only once per map file, so re-entry from a
+                // later idle tick while the dialog is open is harmless).
+                _ = CheckForMissingFonts();
             }
 
 #if !PORTING
@@ -204,12 +230,16 @@ namespace PurplePen.ViewModels
 
             if (controller.MapDisplay.MapType != controller.MapType || controller.MapDisplay.FileName != controller.MapFileName || (controller.MapType == MapType.Bitmap && controller.MapDisplay.Dpi != controller.MapDpi)) {
                 // A new map file has been loaded, or the DPI has changed.
-                ocadCreationSettingsPrevious = null;
-                bitmapCreationSettingsPrevious = null;
 #if !PORTING
                 mapViewer.ZoomFactor = 1.0F;   // used if the map bounds are empty, then this zoom factor is preserved.
                 ShowRectangle(mapDisplay.MapBounds);
 #endif
+                // Reset the per-dialog settings caches.
+                ocadCreationSettingsPrevious = null;
+                bitmapCreationSettingsPrevious = null;
+                gpxCreationSettingsPrevious = null;
+                exportKmlSettingsPrevious = null;
+                routeGadgetCreationSettingsPrevious = null;
             }
 
 #if PORTING
@@ -379,6 +409,26 @@ namespace PurplePen.ViewModels
         { controller?.RightButtonCancelDrag(Pane.Map); }
 
         #endregion
+
+        /// <summary>
+        /// Raised when the window should be closed (e.g. File→Exit).
+        /// </summary>
+        public event EventHandler? CloseRequested;
+
+        /// <summary>
+        /// Callback to show a rectangle on the map display.
+        /// </summary>
+        public Action<RectangleF>? ShowRectangleCallback;
+
+        /// <summary>
+        /// Checks whether it is safe to close the file (prompting to save unsaved changes).
+        /// Returns true if the window may close.
+        /// </summary>
+        public async Task<bool> TryCloseAsync()
+        {
+            if (controller == null) return true;
+            return await controller.TryCloseFile();
+        }
 
     }
 }

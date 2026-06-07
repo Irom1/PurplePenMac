@@ -1,22 +1,29 @@
 <!--
     PunchPatternDialog.axaml
-    Edit punch patterns for each control code.
+
+    Punch Patterns dialog. Shows a list of control codes on the left and a
+    dot grid editor on the right. The user selects a code and toggles dots
+    to define its punch pattern. Codes without a pattern are shown in red.
+
     Migrated from WinForms PurplePen/PunchPatternDialog.cs.
 -->
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:PurplePen.ViewModels"
+        xmlns:views="using:AvPurplePen.Views"
         xmlns:resx="using:AvPurplePen"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        d:DesignWidth="520" d:DesignHeight="440"
         x:Class="AvPurplePen.Views.PunchPatternDialog"
+        Classes="dialog"
         x:DataType="vm:PunchPatternDialogViewModel"
         Title="{resx:Localize PunchPatternDialog_Text}"
         Icon="/Assets/transparent.ico"
-        Width="520" Height="440"
-        CanResize="False"
+        d:DesignWidth="468" d:DesignHeight="430"
+        Width="468" Height="430"
+        MinWidth="350" MinHeight="300"
+        CanResize="True"
         CanMinimize="False"
         CanMaximize="False"
         WindowStartupLocation="CenterOwner"
@@ -27,113 +34,66 @@
     </Design.DataContext>
 
     <Window.Styles>
-        <!-- Dot toggle button: filled circle when checked, empty circle when unchecked -->
-        <Style Selector="ToggleButton.dot">
-            <Setter Property="Width" Value="28"/>
-            <Setter Property="Height" Value="28"/>
-            <Setter Property="Padding" Value="0"/>
-            <Setter Property="Margin" Value="2"/>
-            <Setter Property="CornerRadius" Value="14"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="BorderBrush" Value="#888"/>
-            <Setter Property="BorderThickness" Value="1.5"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
-        <Style Selector="ToggleButton.dot:checked">
-            <Setter Property="Background" Value="#333"/>
-            <Setter Property="BorderBrush" Value="#333"/>
-        </Style>
-        <!-- Code list item: red text when no pattern defined -->
-        <Style Selector="ListBoxItem TextBlock.code-text">
-            <Setter Property="Foreground" Value="Black"/>
-        </Style>
-        <Style Selector="ListBoxItem TextBlock.code-text.undefined">
+        <!-- Codes without a punch pattern are shown in red -->
+        <Style Selector="ListBoxItem TextBlock.noPattern">
             <Setter Property="Foreground" Value="Red"/>
         </Style>
     </Window.Styles>
 
-    <DockPanel>
+    <DockPanel Margin="12">
 
-        <!-- OK / Cancel -->
-        <Border DockPanel.Dock="Bottom"
-                BorderThickness="0,1,0,0"
-                BorderBrush="#E0E0E0"
-                Padding="12,8">
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Spacing="8">
-                <Button x:Name="okButton"
-                        Content="{resx:Localize OKButton}"
-                        Width="85"
-                        HorizontalContentAlignment="Center"
-                        IsDefault="True"
-                        Click="OkButton_Click"/>
-                <Button x:Name="cancelButton"
-                        Content="{resx:Localize CancelButton}"
-                        Width="85"
-                        HorizontalContentAlignment="Center"
-                        IsCancel="True"
-                        Click="CancelButton_Click"/>
-            </StackPanel>
-        </Border>
+        <!-- Bottom: format button on left, OK/Cancel on right -->
+        <Grid DockPanel.Dock="Bottom"
+              ColumnDefinitions="Auto,*,Auto,Auto"
+              Margin="0,12,0,0">
+            <Button x:Name="formatButton"
+                    Grid.Column="0"
+                    Content="{resx:Localize PunchPatternDialog_formatButton_Text}"
+                    Command="{Binding ShowFormatCommand}"/>
+            <Button x:Name="okButton"
+                    Grid.Column="2"
+                    Content="{resx:Localize OKButton}"
+                    Width="85"
+                    HorizontalContentAlignment="Center"
+                    IsDefault="True"
+                    Click="OkButton_Click"/>
+            <Button x:Name="cancelButton"
+                    Grid.Column="3"
+                    Content="{resx:Localize CancelButton}"
+                    Width="85"
+                    HorizontalContentAlignment="Center"
+                    IsCancel="True"
+                    Click="CancelButton_Click"
+                    Margin="8,0,0,0"/>
+        </Grid>
 
-        <!-- Instruction label -->
-        <TextBlock DockPanel.Dock="Top"
+        <!-- Top: instruction label -->
+        <TextBlock x:Name="punchPatternsLabel"
+                   DockPanel.Dock="Top"
                    Text="{resx:Localize PunchPatternDialog_punchPatternsLabel_Text}"
                    TextWrapping="Wrap"
-                   Margin="12,10,12,8"/>
+                   Margin="0,0,0,8"/>
 
-        <!-- Main content: code list (left) + dot grid (right) -->
-        <Grid ColumnDefinitions="130,*" Margin="12,0,12,8">
+        <!-- Center: code list on left, dot grid on right -->
+        <Grid ColumnDefinitions="140,12,*">
 
-            <!-- Code list + layout button -->
-            <DockPanel Grid.Column="0" Margin="0,0,10,0">
-                <Button x:Name="formatButton"
-                        DockPanel.Dock="Bottom"
-                        Content="{resx:Localize PunchPatternDialog_formatButton_Text}"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Center"
-                        Margin="0,6,0,0"
-                        Command="{Binding ShowPunchcardLayoutCommand}"/>
+            <!-- Code list -->
+            <ListBox x:Name="codeList"
+                     Grid.Column="0"
+                     ItemsSource="{Binding CodeItems}"
+                     SelectedItem="{Binding SelectedCodeItem, Mode=TwoWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:DataType="vm:PunchCodeItem">
+                        <TextBlock Text="{Binding Code}"
+                                   Classes.noPattern="{Binding !HasPattern}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
 
-                <ListBox x:Name="codeList"
-                         ItemsSource="{Binding Codes}"
-                         SelectedItem="{Binding SelectedCode, Mode=TwoWay}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate x:DataType="vm:CodeItemViewModel">
-                            <TextBlock x:Name="codeText"
-                                       Text="{Binding Code}"
-                                       Classes.undefined="{Binding !HasPattern}"
-                                       Classes="code-text"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </DockPanel>
-
-            <!-- Dot grid: 7×7 ToggleButtons -->
-            <Border Grid.Column="1"
-                    BorderBrush="#CCC"
-                    BorderThickness="1"
-                    CornerRadius="4"
-                    Padding="4"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-                <ItemsControl x:Name="dotGrid"
-                              ItemsSource="{Binding Dots}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <UniformGrid Rows="7" Columns="7"/>
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="vm:DotViewModel">
-                            <ToggleButton Classes="dot"
-                                          IsChecked="{Binding IsChecked, Mode=TwoWay}"/>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </Border>
+            <!-- Dot grid editor -->
+            <views:DotGrid x:Name="dotGrid"
+                           Grid.Column="2"
+                           Dots="{Binding Dots, Mode=TwoWay}"/>
 
         </Grid>
 

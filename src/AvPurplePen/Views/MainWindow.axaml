@@ -170,8 +170,13 @@
                 <MenuItem x:Name="allControlsMenu" Header="{resx:Localize MainFrame_allControlsMenu_Text}" InputGesture="F4" 
                           Command="{Binding ToggleAllControlsCommand}"
                           ToggleType="CheckBox" IsChecked="{Binding ViewAllControlsChecked}"/>
-                <MenuItem x:Name="otherCoursesMenu" Header="{resx:Localize MainFrame_otherCoursesMenu_Text}" InputGesture="F5" Command="{Binding ShowOtherCoursesCommand}"/>
-                <MenuItem x:Name="clearOtherCoursesMenu" Header="{resx:Localize MainFrame_clearOtherCoursesMenu_Text}" InputGesture="Shift+F5" Command="{Binding ClearOtherCoursesCommand}"/>
+                <MenuItem x:Name="otherCoursesMenu" Header="{resx:Localize MainFrame_otherCoursesMenu_Text}" 
+                          InputGesture="F5" 
+                          Command="{Binding ShowOtherCoursesCommand}"/>
+                <MenuItem x:Name="clearOtherCoursesMenu" Header="{resx:Localize MainFrame_clearOtherCoursesMenu_Text}" 
+                          IsVisible="{Binding IsVisibleClearOtherCourses}"
+                          InputGesture="Shift+F5" 
+                          Command="{Binding ClearOtherCoursesCommand}"/>
             </MenuItem>
 
             <!-- === Add Menu === -->
@@ -217,7 +222,9 @@
                 <MenuItem x:Name="addOutOfBoundsMenu" Header="{resx:Localize MainFrame_addOutOfBoundsMenu_Text}" Command="{Binding AddOutOfBoundsCommand}">
                     <MenuItem.Icon><Image Source="/Assets/Toolbar/outOfBoundsItem.png" Width="16" Height="16"/></MenuItem.Icon>
                 </MenuItem>
-                <MenuItem x:Name="addDangerousMenu" Header="{resx:Localize MainFrame_addDangerousMenu_Text}" Command="{Binding AddDangerousCommand}">
+                <MenuItem x:Name="addDangerousMenu" Header="{resx:Localize MainFrame_addDangerousMenu_Text}" 
+                          IsVisible="{Binding IsVisibleDangerousArea}"
+                          Command="{Binding AddDangerousCommand}">
                     <MenuItem.Icon><Image Source="/Assets/Toolbar/dangerousItem.png" Width="16" Height="16"/></MenuItem.Icon>
                 </MenuItem>
                 <MenuItem x:Name="addConstructionMenu" Header="{resx:Localize MainFrame_addConstructionMenu_Text}" Command="{Binding AddConstructionCommand}">
@@ -271,12 +278,22 @@
                 <MenuItem x:Name="punchPatternsMenu" Header="{resx:Localize MainFrame_punchPatternsMenu_Text}" Command="{Binding PunchPatternsCommand}"/>
                 <Separator/>
                 <MenuItem x:Name="iOFStandardsToolStripMenuItem" Header="{resx:Localize MainFrame_iOFStandardsToolStripMenuItem_Text}">
-                    <MenuItem x:Name="descriptionStd2004Menu" Header="{resx:Localize MainFrame_descriptionStd2004Menu_Text}" Command="{Binding SetDescriptionStd2004Command}"/>
-                    <MenuItem x:Name="descriptionStd2018Menu" Header="{resx:Localize MainFrame_descriptionStd2018Menu_Text}" Command="{Binding SetDescriptionStd2018Command}"/>
+                    <MenuItem x:Name="descriptionStd2004Menu" Header="{resx:Localize MainFrame_descriptionStd2004Menu_Text}" 
+                              ToggleType="CheckBox" IsChecked="{Binding DescriptionStd2004Checked}"
+                              Command="{Binding SetDescriptionStd2004Command}"/>
+                    <MenuItem x:Name="descriptionStd2018Menu" Header="{resx:Localize MainFrame_descriptionStd2018Menu_Text}" 
+                              ToggleType="CheckBox" IsChecked="{Binding DescriptionStd2018Checked}"
+                              Command="{Binding SetDescriptionStd2018Command}"/>
                     <Separator/>
-                    <MenuItem x:Name="mapStd2000Menu" Header="{resx:Localize MainFrame_mapStd2000Menu_Text}" Command="{Binding SetMapStd2000Command}"/>
-                    <MenuItem x:Name="mapStd2017Menu" Header="{resx:Localize MainFrame_mapStd2017Menu_Text}" Command="{Binding SetMapStd2017Command}"/>
-                    <MenuItem x:Name="mapStdSpr2019Menu" Header="{resx:Localize MainFrame_mapStdSpr2019Menu_Text}" Command="{Binding SetMapStdSpr2019Command}"/>
+                    <MenuItem x:Name="mapStd2000Menu" Header="{resx:Localize MainFrame_mapStd2000Menu_Text}" 
+                              ToggleType="CheckBox" IsChecked="{Binding MapStd2000Checked}"
+                              Command="{Binding SetMapStd2000Command}"/>
+                    <MenuItem x:Name="mapStd2017Menu" Header="{resx:Localize MainFrame_mapStd2017Menu_Text}" 
+                              ToggleType="CheckBox" IsChecked="{Binding MapStd2017Checked}"
+                              Command="{Binding SetMapStd2017Command}"/>
+                    <MenuItem x:Name="mapStdSpr2019Menu" Header="{resx:Localize MainFrame_mapStdSpr2019Menu_Text}" 
+                              ToggleType="CheckBox" IsChecked="{Binding MapStdSpr2019Checked}"
+                              Command="{Binding SetMapStdSpr2019Command}"/>
                 </MenuItem>
                 <MenuItem x:Name="customizeDescriptionsMenu" Header="{resx:Localize MainFrame_customizeDescriptionsMenu_Text}" Command="{Binding CustomizeDescriptionsCommand}"/>
                 <MenuItem x:Name="customizeCourseAppearanceMenu" Header="{resx:Localize MainFrame_customizeCourseAppearanceMenu_Text}" Command="{Binding CustomizeCourseAppearanceCommand}"/>
@@ -329,14 +346,19 @@
                           Command="{Binding RotateCommand}"/>
                 <MenuItem x:Name="stretchMenu" Header="{resx:Localize MainFrame_stretchMenu_Text}"
                           Command="{Binding StretchCommand}"/>
-                <MenuItem x:Name="legFlaggingMenu" Header="{resx:Localize MainFrame_legFlaggingMenu_Text}">
+                <MenuItem x:Name="legFlaggingMenu" Header="{resx:Localize MainFrame_legFlaggingMenu_Text}"
+                          IsEnabled="{Binding CanSetLegFlagging}">
                     <MenuItem x:Name="noFlaggingMenu" Header="{resx:Localize MainFrame_noFlaggingMenu_Text}"
+                              ToggleType="CheckBox" IsChecked="{Binding NoFlaggingChecked}"
                               Command="{Binding SetNoFlaggingCommand}"/>
                     <MenuItem x:Name="entireFlaggingMenu" Header="{resx:Localize MainFrame_entireFlaggingMenu_Text}"
+                              ToggleType="CheckBox" IsChecked="{Binding EntireFlaggingChecked}"
                               Command="{Binding SetEntireFlaggingCommand}"/>
                     <MenuItem x:Name="beginFlaggingMenu" Header="{resx:Localize MainFrame_beginFlaggingMenu_Text}"
+                              ToggleType="CheckBox" IsChecked="{Binding BeginFlaggingChecked}"
                               Command="{Binding SetBeginFlaggingCommand}"/>
                     <MenuItem x:Name="endFlaggingMenu" Header="{resx:Localize MainFrame_endFlaggingMenu_Text}"
+                              ToggleType="CheckBox" IsChecked="{Binding EndFlaggingChecked}"
                               Command="{Binding SetEndFlaggingCommand}"/>
                 </MenuItem>
                 <Separator/>
@@ -347,15 +369,20 @@
             <!-- === Reports Menu === -->
             <MenuItem x:Name="reportMenu" Header="{resx:Localize MainFrame_reportMenu_Text}">
                 <MenuItem x:Name="courseSummaryMenu" Header="{resx:Localize MainFrame_courseSummaryMenu_Text}"
-                          Command="{Binding ShowCourseSummaryCommand}"/>
+                          Command="{Binding ShowCourseSummaryCommand}"
+                          CommandParameter="{resx:Localize MainFrame_courseSummaryMenu_Text}"/>
                 <MenuItem x:Name="eventAuditMenu" Header="{resx:Localize MainFrame_eventAuditMenu_Text}"
-                          Command="{Binding ShowEventAuditCommand}"/>
+                          Command="{Binding ShowEventAuditCommand}"
+                          CommandParameter="{resx:Localize MainFrame_eventAuditMenu_Text}"/>
                 <MenuItem x:Name="legLengthsMenu" Header="{resx:Localize MainFrame_legLengthsMenu_Text}"
-                          Command="{Binding ShowLegLengthsCommand}"/>
+                          Command="{Binding ShowLegLengthsCommand}"
+                          CommandParameter="{resx:Localize MainFrame_legLengthsMenu_Text}"/>
                 <MenuItem x:Name="controlCrossrefMenu" Header="{resx:Localize MainFrame_controlCrossrefMenu_Text}"
-                          Command="{Binding ShowControlCrossrefCommand}"/>
+                          Command="{Binding ShowControlCrossrefCommand}"
+                          CommandParameter="{resx:Localize MainFrame_controlCrossrefMenu_Text}"/>
                 <MenuItem x:Name="controlAndLegLoadMenu" Header="{resx:Localize MainFrame_controlAndLegLoadMenu_Text}"
-                          Command="{Binding ShowControlAndLegLoadCommand}"/>
+                          Command="{Binding ShowControlAndLegLoadCommand}"
+                          CommandParameter="{resx:Localize MainFrame_controlAndLegLoadMenu_Text}"/>
             </MenuItem>
 
             <!-- === Help Menu === -->
@@ -421,7 +448,8 @@
         <!-- Toolbar buttons arranged in a horizontal StackPanel.
              Image-only buttons show just an icon with a tooltip.
              Image+text buttons show icon and label side by side.
-             Dropdown buttons use SplitButton with MenuFlyout. -->
+             Dropdown buttons are a single-item Menu (see App.axaml toolbar Menu styles) so the
+             native menu gesture works: press to open, drag over items, release to select. -->
         <StackPanel x:Name="toolbar" Classes="toolbar" DockPanel.Dock="Top" Orientation="Horizontal"
                     Spacing="2" Height="28">
 
@@ -511,38 +539,39 @@
                 </StackPanel>
             </Button>
 
-            <!-- Map Exchange dropdown (image + text, click opens flyout menu) -->
-            <Button x:Name="mapExchangeToolStripMenu" Padding="2,2">
-                <StackPanel Orientation="Horizontal" Spacing="4">
-                    <Image Source="/Assets/Toolbar/mapExchange.png" Width="16" Height="16"/>
-                    <TextBlock Text="{resx:Localize MainFrame_mapExchangeToolStripMenu_Text}"
-                               VerticalAlignment="Center"/>
-                    <PathIcon Data="M1939 486L2029 576L1024 1581L19 576L109 486L1024 1401L1939 486Z"
-                             Width="8" Height="8" VerticalAlignment="Center"/>
-                </StackPanel>
-                <Button.Flyout>
-                    <MenuFlyout  Placement="BottomEdgeAlignedLeft">
-                        <MenuItem x:Name="mapFlipMenuItem" Header="{resx:Localize MainFrame_mapFlipMenuItem_Text}"
-                                  Command="{Binding AddMapFlipControlCommand}">
-                            <MenuItem.Icon>
-                                <Image Source="/Assets/Toolbar/mapFlipMenuItem.png" Width="16" Height="16"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem x:Name="mapExchangeControlToolStripMenuItem" Header="{resx:Localize MainFrame_mapExchangeControlToolStripMenuItem_Text}"
-                                  Command="{Binding AddMapExchangeControlCommand}">
-                            <MenuItem.Icon>
-                                <Image Source="/Assets/Toolbar/mapExchangeControlItem.png" Width="16" Height="16"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem x:Name="mapExchangeSeparateToolStripMenuItem" Header="{resx:Localize MainFrame_mapExchangeSeparateToolStripMenuItem_Text}"
-                                  Command="{Binding AddMapExchangeSeparateCommand}">
-                            <MenuItem.Icon>
-                                <Image Source="/Assets/Toolbar/mapExchangeSeparateItem.png" Width="16" Height="16"/>
-                            </MenuItem.Icon>
-                        </MenuItem>
-                    </MenuFlyout>
-                </Button.Flyout>
-            </Button>
+            <!-- Map Exchange dropdown. A single-item Menu (not Button + Flyout) so the native menu
+                 interaction handler provides press-to-open, drag-over, release-to-select. -->
+            <Menu x:Name="mapExchangeToolStripMenu" IsEnabled="{Binding CanAddMapExchangeAny}">
+                <MenuItem>
+                    <MenuItem.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <Image Source="/Assets/Toolbar/mapExchange.png" Width="16" Height="16"/>
+                            <TextBlock Text="{resx:Localize MainFrame_mapExchangeToolStripMenu_Text}"
+                                       VerticalAlignment="Center"/>
+                            <PathIcon Data="M1939 486L2029 576L1024 1581L19 576L109 486L1024 1401L1939 486Z"
+                                     Width="8" Height="8" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </MenuItem.Header>
+                    <MenuItem x:Name="mapFlipMenuItem" Header="{resx:Localize MainFrame_mapFlipMenuItem_Text}"
+                              Command="{Binding AddMapFlipControlCommand}">
+                        <MenuItem.Icon>
+                            <Image Source="/Assets/Toolbar/mapFlipMenuItem.png" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem x:Name="mapExchangeControlToolStripMenuItem" Header="{resx:Localize MainFrame_mapExchangeControlToolStripMenuItem_Text}"
+                              Command="{Binding AddMapExchangeControlCommand}">
+                        <MenuItem.Icon>
+                            <Image Source="/Assets/Toolbar/mapExchangeControlItem.png" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem x:Name="mapExchangeSeparateToolStripMenuItem" Header="{resx:Localize MainFrame_mapExchangeSeparateToolStripMenuItem_Text}"
+                              Command="{Binding AddMapExchangeSeparateCommand}">
+                        <MenuItem.Icon>
+                            <Image Source="/Assets/Toolbar/mapExchangeSeparateItem.png" Width="16" Height="16"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
 
             <!-- Add Variation (image + text) -->
             <Button x:Name="addVariationToolStripButton" Padding="2,2"
@@ -555,16 +584,17 @@
             </Button>
 
             <!-- Special Items dropdown (image + text, click opens flyout menu) -->
-            <Button x:Name="specialItemToolStripMenu" Padding="2,2">
-                <StackPanel Orientation="Horizontal" Spacing="4">
-                    <Image Source="/Assets/Toolbar/specialItem.png" Width="16" Height="16"/>
-                    <TextBlock Text="{resx:Localize MainFrame_specialItemToolStripMenu_Text}"
-                               VerticalAlignment="Center"/>
-                    <PathIcon Data="M1939 486L2029 576L1024 1581L19 576L109 486L1024 1401L1939 486Z"
-                             Width="8" Height="8" VerticalAlignment="Center"/>
-                </StackPanel>
-                <Button.Flyout>
-                    <MenuFlyout  Placement="BottomEdgeAlignedLeft">
+            <Menu x:Name="specialItemToolStripMenu">
+                <MenuItem>
+                    <MenuItem.Header>
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <Image Source="/Assets/Toolbar/specialItem.png" Width="16" Height="16"/>
+                            <TextBlock Text="{resx:Localize MainFrame_specialItemToolStripMenu_Text}"
+                                       VerticalAlignment="Center"/>
+                            <PathIcon Data="M1939 486L2029 576L1024 1581L19 576L109 486L1024 1401L1939 486Z"
+                                     Width="8" Height="8" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </MenuItem.Header>
                         <MenuItem x:Name="mapIssuePointToolStripMenuItem" Header="{resx:Localize MainFrame_mapIssuePointToolStripMenuItem_Text}"
                                   Command="{Binding AddMapIssueCommand}">
                             <MenuItem.Icon>
@@ -590,6 +620,7 @@
                             </MenuItem.Icon>
                         </MenuItem>
                         <MenuItem x:Name="dangerousToolStripMenuItem" Header="{resx:Localize MainFrame_dangerousToolStripMenuItem_Text}"
+                                  IsVisible="{Binding IsVisibleDangerousArea}"
                                   Command="{Binding AddDangerousCommand}">
                             <MenuItem.Icon>
                                 <Image Source="/Assets/Toolbar/dangerousItem.png" Width="16" Height="16"/>
@@ -668,9 +699,8 @@
                                 <Image Source="/Assets/Toolbar/ellipseItem.png" Width="16" Height="16"/>
                             </MenuItem.Icon>
                         </MenuItem>
-                    </MenuFlyout>
-                </Button.Flyout>
-            </Button>
+                </MenuItem>
+            </Menu>
             <Separator Width="1" Margin="2,2"/>
 
             <!-- Add Bend (image only) -->

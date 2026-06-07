@@ -1,7 +1,12 @@
 <!--
     MoveAllControlsDialog.axaml
-    Simple dialog to select the transformation action for moving all controls.
-    Ported from WinForms PurplePen/MoveAllControls.cs.
+
+    Move All Controls dialog. A short description followed by four mutually
+    exclusive radio buttons that choose how every control on the map is moved:
+    move only, move and scale, move and rotate, or move, scale, and rotate.
+    The choice is read back from the ViewModel's Action after OK.
+
+    Migrated from WinForms PurplePen/MoveAllControls.cs.
 -->
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,13 +15,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        d:DesignWidth="350" d:DesignHeight="200"
         x:Class="AvPurplePen.Views.MoveAllControlsDialog"
         Classes="dialog"
         x:DataType="vm:MoveAllControlsDialogViewModel"
-        Title="{resx:Localize MoveAllControlsDialog_Text}"
+        Title="{resx:Localize MoveAllControls_Text}"
         Icon="/Assets/transparent.ico"
-        Width="350" SizeToContent="Height"
+        d:DesignWidth="420" d:DesignHeight="240"
+        Width="420"
+        SizeToContent="Height"
         CanResize="False"
         CanMinimize="False"
         CanMaximize="False"
@@ -27,39 +33,54 @@
         <vm:MoveAllControlsDialogViewModel/>
     </Design.DataContext>
 
-    <DockPanel>
-        <!-- OK / Cancel buttons -->
-        <Border DockPanel.Dock="Bottom"
-                BorderThickness="0,1,0,0"
-                BorderBrush="#E0E0E0"
-                Padding="12,8">
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Spacing="8">
-                <Button x:Name="okButton"
-                        Content="{resx:Localize OKButton}"
-                        Width="85" HorizontalContentAlignment="Center"
-                        IsDefault="True"
-                        Click="OkButton_Click"/>
-                <Button x:Name="cancelButton"
-                        Content="{resx:Localize CancelButton}"
-                        Width="85" HorizontalContentAlignment="Center"
-                        IsCancel="True"
-                        Click="CancelButton_Click"/>
+    <DockPanel Margin="12">
+
+        <!-- OK / Cancel buttons at the bottom -->
+        <StackPanel DockPanel.Dock="Bottom"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="8"
+                    Margin="0,16,0,0">
+            <Button x:Name="okButton"
+                    Content="{resx:Localize OKButton}"
+                    Width="85"
+                    HorizontalContentAlignment="Center"
+                    IsDefault="True"
+                    Click="OkButton_Click"/>
+            <Button x:Name="cancelButton"
+                    Content="{resx:Localize CancelButton}"
+                    Width="85"
+                    HorizontalContentAlignment="Center"
+                    IsCancel="True"
+                    Click="CancelButton_Click"/>
+        </StackPanel>
+
+        <StackPanel Spacing="12">
+
+            <TextBlock x:Name="labelDescription"
+                       Text="{resx:Localize MoveAllControls_labelDescription_Text}"
+                       TextWrapping="Wrap"/>
+
+            <StackPanel Spacing="6" Margin="0,4,0,0">
+                <RadioButton x:Name="radioButtonMove"
+                             GroupName="MoveAction"
+                             Content="{resx:Localize MoveAllControls_radioButtonMove_Text}"
+                             IsChecked="{Binding IsMove, Mode=TwoWay}"/>
+                <RadioButton x:Name="radioButtonMoveAndScale"
+                             GroupName="MoveAction"
+                             Content="{resx:Localize MoveAllControls_radioButtonMoveAndScale_Text}"
+                             IsChecked="{Binding IsMoveScale, Mode=TwoWay}"/>
+                <RadioButton x:Name="radioButtonMoveAndRotate"
+                             GroupName="MoveAction"
+                             Content="{resx:Localize MoveAllControls_radioButtonMoveAndRotate_Text}"
+                             IsChecked="{Binding IsMoveRotate, Mode=TwoWay}"/>
+                <RadioButton x:Name="radioButtonMoveRotateScale"
+                             GroupName="MoveAction"
+                             Content="{resx:Localize MoveAllControls_radioButtonMoveRotateScale_Text}"
+                             IsChecked="{Binding IsMoveRotateScale, Mode=TwoWay}"/>
             </StackPanel>
-        </Border>
 
-        <Grid Margin="12" RowDefinitions="Auto,Auto">
-            <!-- Description label -->
-            <TextBlock Grid.Row="0"
-                       Text="{resx:Localize MoveAllControlsDialog_labelDescription_Text}"
-                       TextWrapping="Wrap"
-                       Margin="0,0,0,12"/>
+        </StackPanel>
 
-            <!-- Action ComboBox -->
-            <ComboBox Grid.Row="1"
-                      x:Name="actionComboBox"
-                      HorizontalAlignment="Stretch"/>
-        </Grid>
     </DockPanel>
 </Window>

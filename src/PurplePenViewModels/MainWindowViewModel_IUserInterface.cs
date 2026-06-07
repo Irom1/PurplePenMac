@@ -10,7 +10,6 @@ namespace PurplePen.ViewModels
 {
     public partial class MainWindowViewModel: IUserInterface
     {
-        private ProgressDialogViewModel? progressDialogViewModel;
         public void Initialize(Controller controller, SymbolDB symbolDB)
         {
             this.controller = controller;
@@ -21,7 +20,7 @@ namespace PurplePen.ViewModels
             CoursePartBannerViewModel.Controller = controller;
         }
 
-        public Size Size => new Size(1024, 768);
+        public Size Size => throw new NotImplementedException();
 
         public void QueueIdleEvent()
         {
@@ -30,7 +29,7 @@ namespace PurplePen.ViewModels
 
         public void PostDelayedAction(Action action)
         {
-            Services.ServiceProvider.GetRequiredService<IPostMessage>().PostMessage(action);
+            Services.ServiceProvider.GetRequiredService<IEventDispatcherService>().PostMessage(action);
         }
 
         public async Task InfoMessage(string message)
@@ -72,9 +71,8 @@ namespace PurplePen.ViewModels
                 Message = message,
                 Buttons = MessageBoxButtons.OkCancel,
                 DefaultButton = okDefault ? MessageBoxButton.Ok : MessageBoxButton.Cancel,
-                Icon = MessageBoxIcon.Information
+                Icon = MessageBoxIcon.Question
             };
-
             await Services.DialogService.ShowDialogAsync(vm);
             return vm.ChosenButton == MessageBoxButton.Ok;
         }
@@ -87,9 +85,7 @@ namespace PurplePen.ViewModels
                 DefaultButton = yesDefault ? MessageBoxButton.Yes : MessageBoxButton.No,
                 Icon = MessageBoxIcon.Question
             };
-
             await Services.DialogService.ShowDialogAsync(vm);
-
             if (vm.ChosenButton == MessageBoxButton.Yes)
                 return YesNoCancel.Yes;
             else if (vm.ChosenButton == MessageBoxButton.No)
@@ -106,53 +102,118 @@ namespace PurplePen.ViewModels
                 DefaultButton = yesDefault ? MessageBoxButton.Yes : MessageBoxButton.No,
                 Icon = MessageBoxIcon.Question
             };
-
             await Services.DialogService.ShowDialogAsync(vm);
             return vm.ChosenButton == MessageBoxButton.Yes;
         }
 
         public async Task<YesNoCancel> MovingSharedControl(string controlCode, string otherCourses)
         {
-            string message = string.Format("Control {0} is used in other courses: {1}\n\nYes = move shared control\nNo = create a new control\nCancel = do nothing.", controlCode, otherCourses);
-            return await YesNoCancelQuestion(message, true);
+            MoveControlChoiceDialogViewModel vm = new MoveControlChoiceDialogViewModel {
+                Code = controlCode,
+                CourseList = otherCourses
+            };
+            await Services.DialogService.ShowDialogAsync(vm);
+            switch (vm.Choice) {
+                case MoveControlChoice.Move:
+                    return YesNoCancel.Yes;
+                case MoveControlChoice.Duplicate:
+                    return YesNoCancel.No;
+                default:
+                    return YesNoCancel.Cancel;
+            }
         }
 
+        // ===== Operation-in-progress dialog plumbing =====
+        //
+        // The WinForms IUserInterface contract is three plain (synchronous)
+        // calls: Show / Update / End. We surface the same shape on top of
+        // IDialogService.ShowOwnedDialog. All state lives on the handle:
+        //   * progressDialog.ViewModel.IsIndeterminate
+        //   * "Did we close it ourselves?" → progressDialog.ClosedProgrammatically
+
+        private INonModalDialog<OperationInProgressDialogViewModel>? progressDialog = null;
+
+        /// <summary>
+        /// Shows the "Operation in Progress" dialog as a modal owned dialog.
+        /// The owner is disabled (classic modal) while the operation runs,
+        /// but this call returns immediately so the caller can keep working
+        /// and poll <see cref="UpdateProgressDialog"/>.
+        /// </summary>
         public void ShowProgressDialog(bool knownDuration, Action onCancelPressed)
         {
-            progressDialogViewModel = new ProgressDialogViewModel {
-                IsIndeterminate = !knownDuration
+            // Defensive: tear down a previous dialog that wasn't ended.
+            if (progressDialog != null) {
+                EndProgressDialog();
+            }
+
+            OperationInProgressDialogViewModel vm = new OperationInProgressDialogViewModel {
+                InformationLabel = "",
+                ProgressAmount = knownDuration ? 0.0 : (double?)null,
             };
-            progressDialogViewModel.SetCancelAction(onCancelPressed);
-            Services.DialogService.ShowProgressWindow(progressDialogViewModel);
+
+            // `dialog` is a local (not progressDialog directly) so the
+            // closure below captures THIS dialog rather than whatever the
+            // field happens to point at when the continuation eventually
+            // fires — important if ShowProgressDialog is called again
+            // before the previous dialog's close-continuation runs.
+            INonModalDialog<OperationInProgressDialogViewModel> dialog =
+                Services.DialogService.ShowOwnedDialog(vm, disableOwner: true);
+            progressDialog = dialog;
+
+            // When the dialog closes, fire onCancelPressed iff the close
+            // was user-initiated (handle.ClosedProgrammatically stays
+            // false in that case).
+            if (onCancelPressed != null) {
+                _ = dialog.ClosedTask.ContinueWith(
+                    _ => {
+                        if (!dialog.ClosedProgrammatically)
+                            onCancelPressed();
+                    },
+                    TaskScheduler.FromCurrentSynchronizationContext());
+            }
+
+            Services.ServiceProvider.GetRequiredService<IEventDispatcherService>().ProcessPendingMessages();
         }
 
+        /// <summary>
+        /// Updates the status text and (for determinate mode) the progress
+        /// fraction. Returns true once the user has clicked Cancel so the
+        /// caller can abort.
+        /// </summary>
         public bool UpdateProgressDialog(string info, double fractionDone)
         {
-            if (progressDialogViewModel != null) {
-                progressDialogViewModel.StatusText = info;
-                progressDialogViewModel.FractionDone = fractionDone;
-                progressDialogViewModel.IsIndeterminate = false;
-            }
-            return false;  // false = continue operation
+            if (progressDialog == null)
+                return true;   // No dialog open — treat as cancelled (matches WinForms).
+
+            progressDialog.ViewModel.InformationLabel = info;
+            if (!progressDialog.ViewModel.IsIndeterminate)
+                progressDialog.ViewModel.ProgressAmount = fractionDone;
+
+            Services.ServiceProvider.GetRequiredService<IEventDispatcherService>().ProcessPendingMessages();
+
+            // User cancelled iff the dialog closed and we didn't close it.
+            return progressDialog.ClosedTask.IsCompleted && !progressDialog.ClosedProgrammatically;
         }
 
+        /// <summary>
+        /// Tears down the progress dialog. Safe to call when the user has
+        /// already cancelled (the window is already closed — Close() is a
+        /// no-op) or when nothing was shown.
+        /// </summary>
         public void EndProgressDialog()
         {
-            Services.DialogService.CloseProgressWindow();
-            progressDialogViewModel = null;
+            progressDialog?.Close();
+            progressDialog = null;
         }
 
         public string GetOpenFileName()
         {
-            // Some legacy call paths still use this synchronous API.
-            // For now, return null rather than throwing.
-            return string.Empty;
+            throw new NotImplementedException();
         }
 
         public async Task<bool> FindMissingMapFile(string missingMapFile)
         {
-            await WarningMessage(string.Format("Could not find map file: {0}", missingMapFile));
-            return false;
+            throw new NotImplementedException();
         }
 
         public bool GetCurrentLocation(out PointF location, out float pixelSize)
@@ -179,13 +240,16 @@ namespace PurplePen.ViewModels
 
         public int LogicalToDeviceUnits(int value)
         {
-            return value;
+            throw new NotImplementedException();
         }
 
 
         public void ShowTopologyView()
         {
-            // Topology view is not ported in Avalonia yet.
+#if PORTING
+            // Not yet implemented.
+            return;
+#endif
         }
 
     }

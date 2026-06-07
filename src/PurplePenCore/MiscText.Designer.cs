@@ -457,6 +457,15 @@ namespace PurplePen {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All map files|*.ocd;*.omap;*.xmap;*.pdf;*.jpeg;*.jpg;*.tiff;*.tif;*.bmp;*.png;*.gif|OCAD files (*.ocd)|*.ocd|Open Orienteering Mapper Files|*.omap;*.xmap|PDF files (*.pdf)|*.pdf|Image files|*.jpeg;*.jpg;*.tiff;*.tif;*.bmp;*.png;*.gif.
+        /// </summary>
+        public static string ChangeMapFile_FileFilter {
+            get {
+                return ResourceManager.GetString("ChangeMapFile_FileFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter the new text..
         /// </summary>
         public static string ChangeTextSpecialExplanation {
@@ -877,6 +886,24 @@ namespace PurplePen {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to GPX file|*.gpx.
+        /// </summary>
+        public static string GpxFilter {
+            get {
+                return ResourceManager.GetString("GpxFilter", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to IOF XML 3.0|*.xml|Spreadsheet (CSV)|*.csv.
+        /// </summary>
+        public static string RelayVariationExportFilter {
+            get {
+                return ResourceManager.GetString("RelayVariationExportFilter", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to The map file must be an OCAD file to use GPX files..
         /// </summary>
@@ -1334,10 +1361,6 @@ namespace PurplePen {
         public static string XmlFilter { get { return ResourceManager.GetString("XmlFilter", resourceCulture); } }
 
         /// <summary>
-        ///   Looks up a localized string similar to GPX File|*.gpx.
-        /// </summary>
-        public static string GpxFilter { get { return ResourceManager.GetString("GpxFilter", resourceCulture); } }
-        
         /// <summary>
         ///   Looks up a localized string similar to Map size from PDF.
         /// </summary>
@@ -1672,5 +1695,8 @@ namespace PurplePen {
         }
         public static string OpenImageDialog_Filter { get { return ResourceManager.GetString("OpenImageDialog_Filter", resourceCulture); } }
         public static string ViewAdditionalCourses_Instructions { get { return ResourceManager.GetString("ViewAdditionalCourses_Instructions", resourceCulture); } }
+        public static string SelectFolder { get { return ResourceManager.GetString("SelectFolder", resourceCulture); } }
+        public static string SaveFileDialog_Title { get { return ResourceManager.GetString("SaveFileDialog_Title", resourceCulture); } }
+        public static string SaveFileDialog_PurplePenFilter { get { return ResourceManager.GetString("SaveFileDialog_PurplePenFilter", resourceCulture); } }
     }
 }

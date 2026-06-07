@@ -1,22 +1,30 @@
 <!--
     LinePropertiesDialog.axaml
-    Shared dialog for Add/Line, Add/Rectangle, Add/Ellipse, and
-    Item/Change Line Appearance. Title and explanation are set from the ViewModel.
+
+    Dialog for editing line/rectangle/ellipse properties: color, style
+    (single/double/dashed), width, gap size, dash size, and corner radius.
+    A live preview sample shows the configured line alongside a control circle.
+    Reused for Add Line, Add Rectangle, Add Ellipse, and Change Line Appearance
+    commands; ShowRadius and ShowLineKind control which rows are visible.
+
     Migrated from WinForms PurplePen/LinePropertiesDialog.cs.
 -->
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:PurplePen.ViewModels"
         xmlns:resx="using:AvPurplePen"
+        xmlns:avutil="using:AvUtil"
+        xmlns:views="using:AvPurplePen.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        d:DesignWidth="380" d:DesignHeight="340"
         x:Class="AvPurplePen.Views.LinePropertiesDialog"
+        Classes="dialog"
         x:DataType="vm:LinePropertiesDialogViewModel"
-        Title="{Binding Title}"
+        Title="{Binding DialogTitle}"
         Icon="/Assets/transparent.ico"
-        Width="380"
+        d:DesignWidth="440" d:DesignHeight="460"
+        Width="440"
         SizeToContent="Height"
         CanResize="False"
         CanMinimize="False"
@@ -28,132 +36,165 @@
         <vm:LinePropertiesDialogViewModel/>
     </Design.DataContext>
 
-    <DockPanel>
+    <DockPanel Margin="12">
 
-        <!-- OK / Cancel at bottom -->
-        <Border DockPanel.Dock="Bottom"
-                BorderThickness="0,1,0,0"
-                BorderBrush="#E0E0E0"
-                Padding="12,8">
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Spacing="8">
-                <Button Content="{resx:Localize OKButton}"
-                        Width="85"
-                        HorizontalContentAlignment="Center"
-                        IsDefault="True"
-                        Click="OkButton_Click"/>
-                <Button Content="{resx:Localize CancelButton}"
-                        Width="85"
-                        HorizontalContentAlignment="Center"
-                        IsCancel="True"
-                        Click="CancelButton_Click"/>
-            </StackPanel>
-        </Border>
+        <!-- OK / Cancel buttons at the bottom -->
+        <StackPanel DockPanel.Dock="Bottom"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="8"
+                    Margin="0,12,0,0">
+            <Button x:Name="okButton"
+                    Content="{resx:Localize OKButton}"
+                    Width="85"
+                    HorizontalContentAlignment="Center"
+                    IsDefault="True"
+                    Click="OkButton_Click"/>
+            <Button x:Name="cancelButton"
+                    Content="{resx:Localize CancelButton}"
+                    Width="85"
+                    HorizontalContentAlignment="Center"
+                    IsCancel="True"
+                    Click="CancelButton_Click"/>
+        </StackPanel>
 
-        <!-- Main content -->
-        <StackPanel Margin="12,10,12,8" Spacing="10">
+        <!-- Sample preview group -->
+        <HeaderedContentControl DockPanel.Dock="Bottom"
+                                Header="{resx:Localize LinePropertiesDialog_groupBox1_Text}"
+                                Margin="0,8,0,0"
+                                Padding="3,10,3,3">
+            <Border Background="White"
+                    CornerRadius="2"
+                    ClipToBounds="True"
+                    Height="80">
+                <avutil:SkiaDrawingView x:Name="previewView"
+                                        Paint="PreviewView_Paint"/>
+            </Border>
+        </HeaderedContentControl>
 
-            <!-- Explanation -->
-            <TextBlock Text="{Binding Explanation}"
-                       TextWrapping="Wrap"/>
+        <!-- Usage/explanation text at the top -->
+        <TextBlock DockPanel.Dock="Top"
+                   Text="{Binding UsageText}"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,8"/>
 
-            <!-- Properties grid -->
-            <Grid ColumnDefinitions="Auto,*,Auto"
-                  RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
-                  RowSpacing="8"
-                  ColumnSpacing="8">
+        <!-- Appearance group -->
+        <HeaderedContentControl Header="{resx:Localize LinePropertiesDialog_groupBox2_Text}"
+                                Padding="10,12,10,8">
+            <Grid ColumnDefinitions="Auto,Auto,Auto,*"
+                  RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto">
 
-                <!-- Color -->
+                <!-- Row 0: Color -->
                 <TextBlock Grid.Row="0" Grid.Column="0"
                            Text="{resx:Localize LinePropertiesDialog_label1_Text}"
-                           VerticalAlignment="Center"/>
-                <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
-                          SelectedIndex="{Binding ColorIndex}">
-                    <ComboBoxItem>Purple</ComboBoxItem>
-                    <ComboBoxItem>Lower Purple</ComboBoxItem>
-                    <ComboBoxItem>Black</ComboBoxItem>
-                </ComboBox>
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,8"/>
+                <views:SpecialColorChooser Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
+                                           Color="{Binding Color, Mode=TwoWay}"
+                                           PurpleColor="{Binding PurpleColor}"
+                                           Margin="0,0,0,8"/>
 
-                <!-- Line style — hidden for Rectangle (ShowLineKindOpacity) -->
+                <!-- Row 1: Style (line kind) -->
                 <TextBlock Grid.Row="1" Grid.Column="0"
-                           Opacity="{Binding ShowLineKindOpacity}"
                            Text="{resx:Localize LinePropertiesDialog_label2_Text}"
-                           VerticalAlignment="Center"/>
-                <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
-                          Opacity="{Binding ShowLineKindOpacity}"
-                          IsHitTestVisible="{Binding ShowLineKind}"
-                          SelectedIndex="{Binding LineKindIndex}">
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding LineKindRowVisible}"
+                           Margin="0,0,8,8"/>
+                <ComboBox x:Name="comboBoxStyle"
+                          Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                          HorizontalAlignment="Stretch"
+                          SelectedIndex="{Binding SelectedLineKindIndex, Mode=TwoWay}"
+                          IsVisible="{Binding LineKindRowVisible}"
+                          Margin="0,0,0,8">
                     <ComboBoxItem Content="{resx:Localize LinePropertiesDialog_comboBoxStyle_Items}"/>
                     <ComboBoxItem Content="{resx:Localize LinePropertiesDialog_comboBoxStyle_Items1}"/>
                     <ComboBoxItem Content="{resx:Localize LinePropertiesDialog_comboBoxStyle_Items2}"/>
                 </ComboBox>
 
-                <!-- Line width -->
+                <!-- Row 2: Corner Radius -->
                 <TextBlock Grid.Row="2" Grid.Column="0"
-                           Text="{resx:Localize LinePropertiesDialog_labelWidth_Text}"
-                           VerticalAlignment="Center"/>
-                <NumericUpDown Grid.Row="2" Grid.Column="1"
-                               Value="{Binding LineWidth}"
-                               Minimum="0.01" Maximum="20"
-                               Increment="0.05"
-                               FormatString="F2"/>
-                <TextBlock Grid.Row="2" Grid.Column="2"
-                           Text="{resx:Localize LinePropertiesDialog_labelWidthMm_Text}"
-                           VerticalAlignment="Center"/>
-
-                <!-- Gap size — shown for Double + Dashed -->
-                <TextBlock Grid.Row="3" Grid.Column="0"
-                           Opacity="{Binding ShowGapSizeOpacity}"
-                           Text="{resx:Localize LinePropertiesDialog_labelGapSize_Text}"
-                           VerticalAlignment="Center"/>
-                <NumericUpDown Grid.Row="3" Grid.Column="1"
-                               Opacity="{Binding ShowGapSizeOpacity}"
-                               IsHitTestVisible="{Binding ShowGapSize}"
-                               Value="{Binding GapSize}"
-                               Minimum="0.01" Maximum="20"
-                               Increment="0.05"
-                               FormatString="F2"/>
-                <TextBlock Grid.Row="3" Grid.Column="2"
-                           Opacity="{Binding ShowGapSizeOpacity}"
-                           Text="{resx:Localize LinePropertiesDialog_labelGapSizeMm_Text}"
-                           VerticalAlignment="Center"/>
-
-                <!-- Dash size — shown for Dashed only -->
-                <TextBlock Grid.Row="4" Grid.Column="0"
-                           Opacity="{Binding ShowDashSizeOpacity}"
-                           Text="{resx:Localize LinePropertiesDialog_labelDashSize_Text}"
-                           VerticalAlignment="Center"/>
-                <NumericUpDown Grid.Row="4" Grid.Column="1"
-                               Opacity="{Binding ShowDashSizeOpacity}"
-                               IsHitTestVisible="{Binding ShowDashSize}"
-                               Value="{Binding DashSize}"
-                               Minimum="0.01" Maximum="50"
-                               Increment="0.1"
-                               FormatString="F1"/>
-                <TextBlock Grid.Row="4" Grid.Column="2"
-                           Opacity="{Binding ShowDashSizeOpacity}"
-                           Text="{resx:Localize LinePropertiesDialog_labelDashSizeMm_Text}"
-                           VerticalAlignment="Center"/>
-
-                <!-- Corner radius — shown for Rectangle only -->
-                <TextBlock Grid.Row="5" Grid.Column="0"
-                           Opacity="{Binding ShowRadiusOpacity}"
                            Text="{resx:Localize LinePropertiesDialog_labelCornerRadius_Text}"
-                           VerticalAlignment="Center"/>
-                <NumericUpDown Grid.Row="5" Grid.Column="1"
-                               Opacity="{Binding ShowRadiusOpacity}"
-                               IsHitTestVisible="{Binding ShowRadius}"
-                               Value="{Binding CornerRadius}"
-                               Minimum="0" Maximum="20"
-                               Increment="0.1"
-                               FormatString="F1"/>
-                <TextBlock Grid.Row="5" Grid.Column="2"
-                           Opacity="{Binding ShowRadiusOpacity}"
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding RadiusRowVisible}"
+                           Margin="0,0,8,8"/>
+                <NumericUpDown x:Name="upDownRadius"
+                               Grid.Row="2" Grid.Column="1"
+                               Width="80"
+                               HorizontalAlignment="Left"
+                               Value="{Binding CornerRadius, Mode=TwoWay}"
+                               IsVisible="{Binding RadiusRowVisible}"
+                               Minimum="0" Maximum="50" Increment="0.10"
+                               FormatString="0.00"
+                               Margin="0,0,8,8"/>
+                <TextBlock Grid.Row="2" Grid.Column="2"
                            Text="{resx:Localize LinePropertiesDialog_labelRadiusMm_Text}"
-                           VerticalAlignment="Center"/>
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           IsVisible="{Binding RadiusRowVisible}"
+                           Margin="0,0,0,8"/>
 
+                <!-- Row 3: Width -->
+                <TextBlock Grid.Row="3" Grid.Column="0"
+                           Text="{resx:Localize LinePropertiesDialog_labelWidth_Text}"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,8"/>
+                <NumericUpDown x:Name="upDownWidth"
+                               Grid.Row="3" Grid.Column="1"
+                               Width="80"
+                               HorizontalAlignment="Left"
+                               Value="{Binding LineWidth, Mode=TwoWay}"
+                               Minimum="0.01" Maximum="50" Increment="0.01"
+                               FormatString="0.00"
+                               Margin="0,0,8,8"/>
+                <TextBlock Grid.Row="3" Grid.Column="2"
+                           Text="{resx:Localize LinePropertiesDialog_labelWidthMm_Text}"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           Margin="0,0,0,8"/>
+
+                <!-- Row 4: Gap Size -->
+                <TextBlock Grid.Row="4" Grid.Column="0"
+                           Text="{resx:Localize LinePropertiesDialog_labelGapSize_Text}"
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding GapSizeVisible}"
+                           Margin="0,0,8,8"/>
+                <NumericUpDown x:Name="upDownGapSize"
+                               Grid.Row="4" Grid.Column="1"
+                               Width="80"
+                               Value="{Binding GapSize, Mode=TwoWay}"
+                               IsVisible="{Binding GapSizeVisible}"
+                               Minimum="0.01" Maximum="50"
+                               Increment="{Binding GapSizeIncrement}"
+                               FormatString="0.00"
+                               Margin="0,0,8,8"/>
+                <TextBlock Grid.Row="4" Grid.Column="2"
+                           Text="{resx:Localize LinePropertiesDialog_labelGapSizeMm_Text}"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           IsVisible="{Binding GapSizeVisible}"
+                           Margin="0,0,0,8"/>
+
+                <!-- Row 5: Dash Size -->
+                <TextBlock Grid.Row="5" Grid.Column="0"
+                           Text="{resx:Localize LinePropertiesDialog_labelDashSize_Text}"
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding DashSizeVisible}"
+                           Margin="0,0,8,8"/>
+                <NumericUpDown x:Name="upDownDashSize"
+                               Grid.Row="5" Grid.Column="1"
+                               Width="80"
+                               Value="{Binding DashSize, Mode=TwoWay}"
+                               IsVisible="{Binding DashSizeVisible}"
+                               Minimum="0.1" Maximum="50" Increment="0.1"
+                               FormatString="0.00"
+                               Margin="0,0,8,8"/>
+                <TextBlock Grid.Row="5" Grid.Column="2"
+                           Text="{resx:Localize LinePropertiesDialog_labelDashSizeMm_Text}"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           IsVisible="{Binding DashSizeVisible}"
+                           Margin="0,0,0,8"/>
             </Grid>
-        </StackPanel>
+        </HeaderedContentControl>
     </DockPanel>
 </Window>

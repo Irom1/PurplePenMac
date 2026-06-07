@@ -498,9 +498,6 @@
   <data name="NewEventMapFile_chooseMapFileButton_Text" xml:space="preserve">
     <value>_Choose map file...</value>
   </data>
-  <data name="ChangeMapFile_openFileDialog_Filter" xml:space="preserve">
-    <value>All map files|*.ocd;*.omap;*.xmap;*.pdf;*.jpeg;*.jpg;*.tiff;*.tif;*.bmp;*.png;*.gif|OCAD files (*.ocd)|*.ocd|Open Orienteering Mapper Files|*.omap;*.xmap|PDF files (*.pdf)|*.pdf|Image files|*.jpeg;*.jpg;*.tiff;*.tif;*.bmp;*.png;*.gif</value>
-  </data>
   <data name="NewEventMapFile_openFileDialog_Filter" xml:space="preserve">
     <value>All map files|*.ocd;*.omap;*.xmap;*.pdf;*.jpeg;*.jpg;*.tiff;*.tif;*.bmp;*.png;*.gif|OCAD files (*.ocd)|*.ocd|Open Orienteering Mapper Files|*.omap;*.xmap|PDF files (*.pdf)|*.pdf|Image files|*.jpeg;*.jpg;*.tiff;*.tif;*.bmp;*.png;*.gif</value>
   </data>
@@ -914,6 +911,54 @@
   </data>
   <data name="MoveAllControls_Text" xml:space="preserve">
     <value>Move All Controls</value>
+  </data>
+  <data name="MoveControlChoiceDialog_Text" xml:space="preserve">
+    <value>Moving Shared Control</value>
+  </data>
+  <data name="MoveControlChoiceDialog_labelExplanation_Text" xml:space="preserve">
+    <value>Control "{0}" is present in the following other courses. If you move it, those courses will be changed also.</value>
+  </data>
+  <data name="MoveControlChoiceDialog_moveButton_TitleText" xml:space="preserve">
+    <value>Move Control In All Courses</value>
+  </data>
+  <data name="MoveControlChoiceDialog_moveButton_DetailText" xml:space="preserve">
+    <value>This course and the above listed courses will all change.</value>
+  </data>
+  <data name="MoveControlChoiceDialog_duplicateButton_TitleText" xml:space="preserve">
+    <value>Create New Control In This Course</value>
+  </data>
+  <data name="MoveControlChoiceDialog_duplicateButton_DetailText" xml:space="preserve">
+    <value>Other courses will not change, and control "{0}" will be replaced with a new control at the new location in this course.</value>
+  </data>
+  <data name="MoveControlChoiceDialog_cancelButton_TitleText" xml:space="preserve">
+    <value>Do Nothing</value>
+  </data>
+  <data name="MoveControlChoiceDialog_cancelButton_DetailText" xml:space="preserve">
+    <value>Do not move this control.</value>
+  </data>
+  <data name="MapIssueChoiceDialog_Text" xml:space="preserve">
+    <value>Select Map Issue Point</value>
+  </data>
+  <data name="MapIssueChoiceDialog_labelExplanation_Text" xml:space="preserve">
+    <value>The point at which is the map is issued should be marked on the map. Where is the map given to competitors?</value>
+  </data>
+  <data name="MapIssueChoiceDialog_startButton_TitleText" xml:space="preserve">
+    <value>Map Issue at Beginning</value>
+  </data>
+  <data name="MapIssueChoiceDialog_startButton_DetailText" xml:space="preserve">
+    <value>The map is given out at the beginning of the marked route to the start. Navigation begins at the start triangle.</value>
+  </data>
+  <data name="MapIssueChoiceDialog_middleButton_TitleText" xml:space="preserve">
+    <value>Map Issue along Marked Route</value>
+  </data>
+  <data name="MapIssueChoiceDialog_middleButton_DetailText" xml:space="preserve">
+    <value>The map is given out partially along the marked route to the start. Navigation begins at the start triangle.</value>
+  </data>
+  <data name="MapIssueChoiceDialog_startTriangleButton_TitleText" xml:space="preserve">
+    <value>Map Issue at the Start Triangle</value>
+  </data>
+  <data name="MapIssueChoiceDialog_startTriangleButton_DetailText" xml:space="preserve">
+    <value>The map is issued at the start triangle (where navigation begins).</value>
   </data>
   <data name="SelectLocationsForMove_Text" xml:space="preserve">
     <value>Move All Controls</value>
@@ -1520,6 +1565,9 @@
   </data>
   <data name="EnterSymbolText_Text" xml:space="preserve">
     <value>Customized Symbol Text</value>
+  </data>
+  <data name="EnterSymbolText_defaultCaseText" xml:space="preserve">
+    <value>(unchanged)</value>
   </data>
   <data name="InitialScreen_openLastRadioButton_Text" xml:space="preserve">
     <value>Open last viewed event</value>

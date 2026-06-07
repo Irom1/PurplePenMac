@@ -3,11 +3,37 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PurplePen
 {
+    // Represents a printer name and the custom settings for that printer (not including paper size and margins, which are handled in other structures).
+    public class PrinterNameAndSettings 
+    {
+        public string PrinterName { get; set; } = "";
+
+        // Used for Windows only: DEVMODE structure for the printer settings, as returned by DocumentProperties.
+        // This is used to set the custom printer settings.  It is passed to the Winforms PrintDocument.PrinterSettings.SetHdevmode method.
+        public IntPtr WindowsDevMode { get; set; } = IntPtr.Zero;
+
+        // Used for Linux and Mac only: CUPS printer settings.  This is used to set the custom printer settings for CUPS printers.
+        public List<CupsPrinterSetting> CupsPrinterSettings { get; set; } = new List<CupsPrinterSetting>();
+    }
+
+    // Represents a printer setting for CUPS printers on Linux and Mac.
+    // This is used to set the custom printer settings for CUPS printers.
+    // Gives the name, the friendly name, the possible values, the default value, and the current value for the setting.
+    public class CupsPrinterSetting
+    {
+        public string OptionName { get; set; }
+        public string FriendlyName { get; set; }
+        public string[] AllValues { get; set; }
+        public string DefaultValue { get; set; }
+        public string CurrentValue { get; set; }
+    }
+
     // Represents a paper size for printing.  
     // The Name may be "Custom", for a custom size, or it may be a standard name such as "Letter" or "A4".  
     // Generally you can just look at the SizeInInches or SizeInHundreths to get the size of the paper, and ignore the 
@@ -192,7 +218,9 @@ namespace PurplePen
         public const int DefaultEnglighPaperSizeIndex = 10;
         public const int DefaultMetricPaperSizeindex = 2;
 
-        public const int DefaultEnglishMarginInHundreths = 25;  // 1/4 of a inch.
-        public const int DefaultMetricMarginInHundreths = 28; // 7mm
+        public const int DefaultMapEnglishMarginInHundreths = 25;  // 1/4 of a inch.
+        public const int DefaultMapMetricMarginInHundreths = 28; // 7mm
+        public const int DefaultDescriptionsEnglishMarginInHundreths = 50;  // 1/2 of a inch.
+        public const int DefaultDescriptionsMetricMarginInHundreths = 47; // 12mm
     }
 }

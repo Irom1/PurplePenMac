@@ -1,129 +1,142 @@
 <!--
     CreateOcadFilesDialog.axaml
-    Dialog for File / Create OCAD Files command.
+
+    Dialog for creating OCAD / OpenOrienteeringMapper files for one or more
+    courses. Contains a CourseSelector on the left (with optional variation
+    chooser), a file format / file-name prefix section, and a folder choice
+    section (Same folder as PP file / Same folder as map file / Other folder)
+    with a text box and "Select folder..." button shown only when "Other
+    folder" is selected.
+
     Migrated from WinForms PurplePen/CreateOcadFiles.cs.
 -->
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:PurplePen.ViewModels"
+        xmlns:views="using:AvPurplePen.Views"
         xmlns:resx="using:AvPurplePen"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         x:Class="AvPurplePen.Views.CreateOcadFilesDialog"
+        Classes="dialog"
         x:DataType="vm:CreateOcadFilesDialogViewModel"
-        Title="{resx:Localize CreateOcadFiles_Text}"
+        Title="{Binding DialogTitle}"
         Icon="/Assets/transparent.ico"
-        Width="480" Height="480"
-        MinWidth="380" MinHeight="400"
+        d:DesignWidth="580" d:DesignHeight="360"
+        Width="580" Height="360"
         CanResize="True"
         CanMinimize="False"
         CanMaximize="False"
         WindowStartupLocation="CenterOwner"
         ShowInTaskbar="False">
 
+    <!-- Design-time preview data -->
     <Design.DataContext>
         <vm:CreateOcadFilesDialogViewModel/>
     </Design.DataContext>
 
-    <DockPanel>
+    <DockPanel Margin="12">
 
-        <!-- Footer buttons -->
-        <Border DockPanel.Dock="Bottom"
-                BorderThickness="0,1,0,0"
-                BorderBrush="#E0E0E0"
-                Padding="12,8">
-            <StackPanel Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Spacing="8">
-                <Button x:Name="cancelButton"
-                        Content="{resx:Localize CreateOcadFiles_cancelButton_Text}"
-                        Width="85"
-                        HorizontalContentAlignment="Center"
-                        IsCancel="True"
-                        Click="CancelButton_Click"/>
-                <Button x:Name="createButton"
-                        Content="{resx:Localize CreateOcadFiles_createButton_Text}"
-                        Width="85"
-                        HorizontalContentAlignment="Center"
-                        IsDefault="True"
-                        Click="CreateButton_Click"/>
-            </StackPanel>
-        </Border>
+        <!-- Create / Cancel buttons at the bottom -->
+        <StackPanel DockPanel.Dock="Bottom"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="8"
+                    Margin="0,12,0,0">
+            <Button x:Name="createButton"
+                    Content="{resx:Localize CreateOcadFiles_createButton_Text}"
+                    Width="100"
+                    HorizontalContentAlignment="Center"
+                    IsDefault="True"
+                    Click="CreateButton_Click"/>
+            <Button x:Name="cancelButton"
+                    Content="{resx:Localize CreateOcadFiles_cancelButton_Text}"
+                    Width="100"
+                    HorizontalContentAlignment="Center"
+                    IsCancel="True"
+                    Click="CancelButton_Click"/>
+        </StackPanel>
 
-        <!-- Content -->
-        <ScrollViewer>
-            <StackPanel Margin="16,12,16,8" Spacing="10">
+        <!-- Main content: two columns. Left = courses, right = output + folder. -->
+        <Grid ColumnDefinitions="*,12,*">
 
-                <!-- Courses group -->
-                <HeaderedContentControl Header="{resx:Localize CreateOcadFiles_coursesGroupBox_Text}">
-                    <StackPanel Spacing="4">
-                        <CheckBox Content="All Courses"
-                                  IsChecked="{Binding AllCoursesSelected, Mode=TwoWay}"/>
-                        <ListBox ItemsSource="{Binding Courses}"
-                                 Height="110"
-                                 SelectionMode="Multiple">
-                            <ListBox.ItemTemplate>
-                                <DataTemplate DataType="vm:CourseSelectionItem">
-                                    <CheckBox Content="{Binding Name}"
-                                              IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </StackPanel>
-                </HeaderedContentControl>
+            <!-- === Left column: Courses group === -->
+            <HeaderedContentControl Grid.Column="0"
+                                    Header="{resx:Localize CreateOcadFiles_coursesGroupBox_Text}"
+                                    Padding="8,10,8,8">
+                <views:CourseSelector x:Name="courseSelector"
+                                      EventDB="{Binding EventDB}"
+                                      ShowAllControls="True"
+                                      ShowCourseParts="False"
+                                      ShowVariationChooser="True"/>
+            </HeaderedContentControl>
 
-                <!-- Output group -->
-                <HeaderedContentControl Header="{resx:Localize CreateOcadFiles_outputGroupBox_Text}">
-                    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto">
+            <!-- === Right column: Output (top) + Folder (bottom) === -->
+            <DockPanel Grid.Column="2">
 
+                <!-- Output group: file format and filename prefix -->
+                <HeaderedContentControl DockPanel.Dock="Top"
+                                        Header="{resx:Localize CreateOcadFiles_outputGroupBox_Text}"
+                                        Padding="8"
+                                        Margin="0,0,0,8">
+                    <Grid ColumnDefinitions="Auto,8,*"
+                          RowDefinitions="Auto,4,Auto">
+
+                        <!-- Row 0: File format -->
                         <TextBlock Grid.Row="0" Grid.Column="0"
                                    Text="{resx:Localize CreateOcadFiles_fileFormatLabel_Text}"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,8,4"/>
-                        <ComboBox Grid.Row="0" Grid.Column="1"
-                                  ItemsSource="{Binding FormatNames}"
-                                  SelectedIndex="{Binding SelectedFormatIndex, Mode=TwoWay}"
+                                   VerticalAlignment="Center"/>
+                        <ComboBox x:Name="fileFormatCombo"
+                                  Grid.Row="0" Grid.Column="2"
                                   HorizontalAlignment="Stretch"
-                                  Margin="0,0,0,4"/>
+                                  ItemsSource="{Binding AvailableFileFormats}"
+                                  SelectedItem="{Binding SelectedFileFormat, Mode=TwoWay}"/>
 
-                        <TextBlock Grid.Row="1" Grid.Column="0"
+                        <!-- Row 2: File name prefix -->
+                        <TextBlock Grid.Row="2" Grid.Column="0"
                                    Text="{resx:Localize CreateOcadFiles_fileNamePrefixLabel_Text}"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,8,0"/>
-                        <TextBox Grid.Row="1" Grid.Column="1"
-                                 Text="{Binding FilePrefix, Mode=TwoWay}"
-                                 HorizontalAlignment="Stretch"/>
-
+                                   VerticalAlignment="Center"/>
+                        <TextBox x:Name="filenamePrefixTextBox"
+                                 Grid.Row="2" Grid.Column="2"
+                                 Text="{Binding FilePrefix, Mode=TwoWay}"/>
                     </Grid>
                 </HeaderedContentControl>
 
-                <!-- Folder group -->
-                <HeaderedContentControl Header="{resx:Localize CreateOcadFiles_folderGroupBox_Text}">
+                <!-- Folder group: three radio buttons + folder picker -->
+                <HeaderedContentControl Header="{resx:Localize CreateOcadFiles_folderGroupBox_Text}"
+                                        Padding="8">
                     <StackPanel Spacing="4">
-                        <RadioButton Content="{resx:Localize CreateOcadFiles_coursesDirectory_Text}"
+                        <RadioButton x:Name="coursesDirectory"
+                                     GroupName="OutputFolder"
+                                     Content="{resx:Localize CreateOcadFiles_coursesDirectory_Text}"
                                      IsChecked="{Binding UseFileDirectory, Mode=TwoWay}"/>
-                        <RadioButton Content="{resx:Localize CreateOcadFiles_mapDirectory_Text}"
+                        <RadioButton x:Name="mapDirectory"
+                                     GroupName="OutputFolder"
+                                     Content="{resx:Localize CreateOcadFiles_mapDirectory_Text}"
                                      IsChecked="{Binding UseMapDirectory, Mode=TwoWay}"/>
-                        <RadioButton Content="{resx:Localize CreateOcadFiles_otherDirectory_Text}"
+                        <RadioButton x:Name="otherDirectory"
+                                     GroupName="OutputFolder"
+                                     Content="{resx:Localize CreateOcadFiles_otherDirectory_Text}"
                                      IsChecked="{Binding UseOtherDirectory, Mode=TwoWay}"/>
 
-                        <Grid ColumnDefinitions="*,Auto"
-                              IsVisible="{Binding IsOtherDirectoryVisible}">
-                            <TextBox Grid.Column="0"
-                                     Text="{Binding OtherDirectory, Mode=TwoWay}"
-                                     IsReadOnly="True"
-                                     Margin="0,0,8,0"/>
-                            <Button Grid.Column="1"
-                                    x:Name="browseFolderButton"
-                                    Content="{resx:Localize CreateOcadFiles_selectOtherDirectoryButton_Text}"
-                                    Click="BrowseFolderButton_Click"/>
-                        </Grid>
+                        <!-- Other folder text box + Select folder button.
+                             Only visible when the "Other folder" radio is selected. -->
+                        <TextBox x:Name="otherDirectoryTextBox"
+                                 Text="{Binding OutputDirectory, Mode=TwoWay}"
+                                 IsVisible="{Binding IsOtherDirectoryVisible}"
+                                 Margin="20,4,0,0"/>
+                        <Button x:Name="selectOtherDirectoryButton"
+                                Classes="Small"
+                                Content="{resx:Localize CreateOcadFiles_selectOtherDirectoryButton_Text}"
+                                IsVisible="{Binding IsOtherDirectoryVisible}"
+                                HorizontalAlignment="Right"
+                                Click="SelectOtherDirectoryButton_Click"/>
                     </StackPanel>
                 </HeaderedContentControl>
+            </DockPanel>
 
-            </StackPanel>
-        </ScrollViewer>
+        </Grid>
 
     </DockPanel>
 </Window>

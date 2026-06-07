@@ -552,12 +552,6 @@ After pressing OK, try to find a copy of the map file on your computer.</value>
   <data name="PdfFilter" xml:space="preserve">
     <value>PDF File|*.pdf</value>
   </data>
-  <data name="XmlFilter" xml:space="preserve">
-    <value>IOF XML 3.0|*.xml|IOF XML 2.0|*.xml</value>
-  </data>
-  <data name="GpxFilter" xml:space="preserve">
-    <value>GPX File|*.gpx</value>
-  </data>
   <data name="AddEllipseExplanation" xml:space="preserve">
     <value>Set the appearance of the ellipse. After pressing OK, drag the mouse to place the ellipse in the desired location.</value>
   </data>
@@ -629,7 +623,7 @@ After pressing OK, try to find a copy of the map file on your computer.</value>
     <value>Pdfium PDF converter failed to read PDF file successfully</value>
   </data>
   <data name="PdfConverterNotFound" xml:space="preserve">
-    <value>PdfConverter not found</value>
+    <value>PdfConverter.exe not found</value>
   </data>
   <data name="PdfResultNotReadable" xml:space="preserve">
     <value>Could not read result of PDF conversion from file '{0}'</value>
@@ -658,35 +652,22 @@ After pressing OK, try to find a copy of the map file on your computer.</value>
   <data name="OpenFileDialog_PurplePenFilter" xml:space="preserve">
     <value>Purple Pen files|*.ppen|All files|*.*</value>
   </data>
-  <data name="NewEventFailed" xml:space="preserve">
-    <value>Could not create the new event file. The previous event has been closed.</value>
+  <data name="ChangeMapFile_FileFilter" xml:space="preserve">
+    <value>All map files|*.ocd;*.omap;*.xmap;*.pdf;*.jpeg;*.jpg;*.tiff;*.tif;*.bmp;*.png;*.gif|OCAD files (*.ocd)|*.ocd|Open Orienteering Mapper Files|*.omap;*.xmap|PDF files (*.pdf)|*.pdf|Image files|*.jpeg;*.jpg;*.tiff;*.tif;*.bmp;*.png;*.gif</value>
   </data>
-  <data name="OpenFileDialog_MapFilter" xml:space="preserve">
-    <value>Map files|*.ocd;*.omap;*.pdf;*.jpg;*.jpeg;*.png;*.gif;*.tif;*.tiff;*.bmp|OCAD files|*.ocd|OpenOrienteering files|*.omap|PDF files|*.pdf|Bitmap files|*.jpg;*.jpeg;*.png;*.gif;*.tif;*.tiff;*.bmp|All files|*.*</value>
+  <data name="GpxFilter" xml:space="preserve">
+    <value>GPX file|*.gpx</value>
   </data>
-  <data name="OverwriteFilesPrompt" xml:space="preserve">
-    <value>The following files already exist and will be overwritten:
-
-{0}
-
-Do you want to replace them?</value>
+  <data name="RelayVariationExportFilter" xml:space="preserve">
+    <value>IOF XML 3.0|*.xml|Spreadsheet (CSV)|*.csv</value>
   </data>
-  <data name="AddTextLine_Above" xml:space="preserve">
-    <value>Above {0}</value>
+  <data name="SelectFolder" xml:space="preserve">
+    <value>Select Folder</value>
   </data>
-  <data name="AddTextLine_Below" xml:space="preserve">
-    <value>Below {0}</value>
+  <data name="SaveFileDialog_Title" xml:space="preserve">
+    <value>Save File</value>
   </data>
-  <data name="AddTextLine_ThisCourse" xml:space="preserve">
-    <value>This course only</value>
-  </data>
-  <data name="AddTextLine_AllCourses" xml:space="preserve">
-    <value>All courses with {0}</value>
-  </data>
-  <data name="OpenImageDialog_Filter" xml:space="preserve">
-    <value>Image file|*.jpg;*.jpeg;*.gif;*.png;*.bmp;*.tif;*.tiff</value>
-  </data>
-  <data name="ViewAdditionalCourses_Instructions" xml:space="preserve">
-    <value>Choose additional courses to view with course "{0}".</value>
+  <data name="SaveFileDialog_PurplePenFilter" xml:space="preserve">
+    <value>Purple Pen files (*.ppen)|*.ppen</value>
   </data>
 </root>

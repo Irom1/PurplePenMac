@@ -34,6 +34,9 @@ namespace AvPurplePen
         {
             AvaloniaXamlLoader.Load(this);
 
+#if DEBUG
+            this.AttachDeveloperTools();
+#endif
             // Register our custom color scheme with the SemiTheme so its
             // ThemeDictionaries resolve our variant.
             //SemiTheme semiTheme = (SemiTheme)Styles[0];
@@ -48,11 +51,6 @@ namespace AvPurplePen
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
-                // Avoid duplicate validations from both Avalonia and the CommunityToolkit.
-                // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
-                DisableAvaloniaDataAnnotationValidation();
-
-
                 MainWindowViewModel mainWindowViewModel = new MainWindowViewModel();
                 Controller controller = new Controller(mainWindowViewModel);
 
@@ -68,16 +66,5 @@ namespace AvPurplePen
             ApplicationIdleService.Initialize();
         }
 
-        private void DisableAvaloniaDataAnnotationValidation()
-        {
-            // Get an array of plugins to remove
-            var dataValidationPluginsToRemove =
-                BindingPlugins.DataValidators.OfType<DataAnnotationsValidationPlugin>().ToArray();
-
-            // remove each entry found
-            foreach (var plugin in dataValidationPluginsToRemove) {
-                BindingPlugins.DataValidators.Remove(plugin);
-            }
-        }
     }
 }

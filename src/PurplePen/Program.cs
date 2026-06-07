@@ -54,7 +54,7 @@ namespace PurplePen
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             ServiceProvider serviceProvider;
 
@@ -70,7 +70,7 @@ namespace PurplePen
             services.AddSingleton<ITextMetrics, GDIPlus_TextMetrics>();
             services.AddSingleton<IFileLoaderProvider, GdiPlus_FileLoaderProvider>();
             services.AddSingleton<IPdfWriter, PdfWriter>();
-            services.AddSingleton<IPdfLoadingStatus, PdfLoadingUI>();
+            services.AddTransient<IPdfLoadingStatus, PdfLoadingUI>();
 
             serviceProvider = services.BuildServiceProvider();
             Services.RegisterServiceProvider(serviceProvider);
@@ -112,7 +112,12 @@ namespace PurplePen
             InitClientId();
             FontDesc.InitializeFonts();
 
-            if (args.Length > 0 && await LoadCommandLineFile(args[0])) {
+            if (args.Length > 0) {
+                Task<bool> commandLineFileTask = LoadCommandLineFile(args[0]);
+#pragma warning disable VSTHRD002
+                // I think this task is never actually not completed, but wait for it to complete anyway
+                commandLineFileTask.Wait(10000);
+#pragma warning restore VSTHRD002
                 // We successfully loaded a file from the command line.
                 // Nothing more to do here.
             }
