@@ -35,7 +35,7 @@ cat > "$APP_BUNDLE/Contents/Info.plist" << 'PLIST'
 <plist version="1.0">
 <dict>
     <key>CFBundleExecutable</key>
-    <string>AvPurplePen</string>
+    <string>PurplePen</string>
     <key>CFBundleIdentifier</key>
     <string>com.purplepen.app</string>
     <key>CFBundleName</key>
