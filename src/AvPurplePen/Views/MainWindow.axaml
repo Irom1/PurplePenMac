@@ -812,28 +812,20 @@
                              This is a custom control that renders the description grid,
                              supports selection, and fires Change/SelectedIndexChange events.
                         -->
-                        <views:DescriptionViewer 
+                        <views:DescriptionViewer
                             x:Name="descriptionViewer"
                             DataContext="{Binding DescriptionViewerViewModel}"
                         />
 
-                        <!-- Topology view panel (hidden by default, shown when radio button selected) -->
+                        <!-- Topology view panel (shown when topology radio is selected) -->
                         <Grid x:Name="panelTopology" IsVisible="False"
                               ColumnDefinitions="*,Auto">
 
-                            <!-- PLACEHOLDER: mapViewerTopology
-                                 WinForms type: PurplePen.MapView.MapViewer
-                                 Displays the topology/ordering view of the course.
-                                 Configured with: ConstrainedScrolling=PinTop, MaxZoom=1,
-                                 MouseWheel=Scroll, MiddleButtonAutoDrag=false.
-                                 TODO: Implement as a custom Avalonia control sharing
-                                 the MapViewer rendering infrastructure. -->
-                            <Border x:Name="mapViewerTopology" Grid.Column="0"
-                                    Background="White" BorderBrush="LightGray" BorderThickness="1">
-                                <TextBlock Text="[mapViewerTopology placeholder]"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           Foreground="Gray" FontStyle="Italic"/>
-                            </Border>
+                            <views:MapViewer x:Name="mapViewerTopology" Grid.Column="0"
+                                             MapDisplay="{Binding TopologyMapDisplay}"
+                                             MapHighlights="{Binding TopologyMapHighlights}"
+                                             Tag="Topology"
+                                             Cursor="{StaticResource Arrow}"/>
 
                             <!-- Vertical scroll bar for topology view -->
                             <ScrollBar x:Name="topologyScrollBar" Grid.Column="1"

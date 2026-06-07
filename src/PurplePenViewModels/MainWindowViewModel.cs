@@ -73,6 +73,19 @@ namespace PurplePen.ViewModels
         private IMapViewerHighlight[]? mapHighlights;
 
         [ObservableProperty]
+        private MapDisplay? topologyMapDisplay;
+
+        [ObservableProperty]
+        private IMapViewerHighlight[]? topologyMapHighlights;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(ShowDescription))]
+        private bool showTopology;
+
+        /// <summary>Whether the description view is visible (inverse of ShowTopology).</summary>
+        public bool ShowDescription => !ShowTopology;
+
+        [ObservableProperty]
         private DescriptionViewerViewModel descriptionViewerViewModel = new DescriptionViewerViewModel();
 
         [ObservableProperty]
@@ -192,13 +205,8 @@ namespace PurplePen.ViewModels
                 UpdateSelectionPanel();
                 UpdateHighlight();
                 CoursePartBannerViewModel.UpdatePartBanner();
-#if !PORTING
                 UpdateTopology();
-                UpdatePrintArea();
                 UpdateTopologyHighlight();
-                UpdateCustomSymbolText();
-                CheckForNonRenderableObjects(true, false);
-#endif
                 // Warn about missing fonts (fire-and-forget — the controller
                 // reports the list only once per map file, so re-entry from a
                 // later idle tick while the dialog is open is harmless).
@@ -368,6 +376,33 @@ namespace PurplePen.ViewModels
                 return;   // happens in design mode, for example.
 
             this.MapHighlights = controller.GetHighlights(Pane.Map);
+        }
+
+        /// <summary>
+        /// Updates the topology MapDisplay with the current course topology layout.
+        /// </summary>
+        void UpdateTopology()
+        {
+            if (controller == null) return;
+
+            if (TopologyMapDisplay == null) {
+                TopologyMapDisplay = new MapDisplay();
+                TopologyMapDisplay.SetMapFile(MapType.None, null);
+                TopologyMapDisplay.AntiAlias = false;
+                TopologyMapDisplay.Printing = true;
+            }
+
+            CourseLayout topologyLayout = controller.GetTopologyLayout();
+            TopologyMapDisplay.SetCourse(topologyLayout);
+        }
+
+        /// <summary>
+        /// Updates the highlights shown on the topology view.
+        /// </summary>
+        void UpdateTopologyHighlight()
+        {
+            if (controller == null) return;
+            TopologyMapHighlights = controller.GetHighlights(Pane.Topology);
         }
 
         #endregion // State updating on idle.

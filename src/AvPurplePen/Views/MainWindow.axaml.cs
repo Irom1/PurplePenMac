@@ -45,6 +45,18 @@ namespace AvPurplePen.Views
             Closing += MainWindow_Closing;
             DataContextChanged += MainWindow_DataContextChanged;
 
+            // Wire topology/description radio button toggle
+            radioButtonDescriptions.Click += (_, _) => {
+                if (DataContext is MainWindowViewModel vm) vm.ShowTopology = false;
+                descriptionViewer.IsVisible = true;
+                panelTopology.IsVisible = false;
+            };
+            radioButtonTopology.Click += (_, _) => {
+                if (DataContext is MainWindowViewModel vm) vm.ShowTopology = true;
+                descriptionViewer.IsVisible = false;
+                panelTopology.IsVisible = true;
+            };
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
                 SetupNativeMenu();
             }

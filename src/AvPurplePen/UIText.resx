@@ -3932,9 +3932,6 @@ For printing competition maps, it is suggested that courses be exported to OCAD 
     <value>Select how to move all controls:</value>
   </data>
   <!-- InitialScreenDialog -->
-  <data name="InitialScreen_Text" xml:space="preserve">
-    <value>Purple Pen</value>
-  </data>
   <data name="InitialScreen_welcomeLabel_Text" xml:space="preserve">
     <value>Welcome to Purple Pen! Choose an option to get started:</value>
   </data>
