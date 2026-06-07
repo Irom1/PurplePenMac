@@ -3901,13 +3901,6 @@ For printing competition maps, it is suggested that courses be exported to OCAD 
     <value>Click Finish to create the event file at:</value>
   </data>
 
-  <!-- Map Issue Choice dialog -->
-  <data name="MapIssueChoiceDialog_Text" xml:space="preserve">
-    <value>Select Map Issue Point</value>
-  </data>
-  <data name="MapIssueChoiceDialog_labelExplanation_Text" xml:space="preserve">
-    <value>The point at which the map is issued should be marked on the map. Where is the map given to competitors?</value>
-  </data>
   <data name="MapIssueChoiceDialog_startButton_Title" xml:space="preserve">
     <value>Map Issue at Beginning</value>
   </data>
@@ -3925,16 +3918,6 @@ For printing competition maps, it is suggested that courses be exported to OCAD 
   </data>
   <data name="MapIssueChoiceDialog_startTriangleButton_Detail" xml:space="preserve">
     <value>The map is issued at the start triangle (where navigation begins).</value>
-  </data>
-  <!-- OverwritingOcadFilesDialog -->
-  <data name="OverwritingOcadFilesDialog_Text" xml:space="preserve">
-    <value>Confirm Replace Files</value>
-  </data>
-  <data name="OverwritingOcadFilesDialog_confirmReplaceLabel_Text" xml:space="preserve">
-    <value>The following files already exist. If you continue, they will be replaced.</value>
-  </data>
-  <data name="OverwritingOcadFilesDialog_buttonOK_Text" xml:space="preserve">
-    <value>Replace</value>
   </data>
   <!-- ChangeTextDialog -->
   <data name="ChangeTextDialog_insertSpecialButton_Text" xml:space="preserve">
