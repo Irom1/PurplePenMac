@@ -11,9 +11,6 @@
     </Application.DataTemplates>
 
     <Application.Resources>
-        <FontFamily x:Key="DefaultFontFamily">avares://AvPurplePen/Assets/UIFonts#Source Sans 3</FontFamily>
-        <!-- Override Semi.Avalonia's default font (Inter) with our embedded font -->
-        <FontFamily x:Key="SemiFontFamilyRegular">avares://AvPurplePen/Assets/UIFonts#Source Sans 3</FontFamily>
 
         <!-- Override Semi.Avalonia's menu popup max height (default 400) to prevent scrolling -->
         <x:Double x:Key="MenuFlyoutMaxHeight">10000</x:Double>
@@ -81,13 +78,7 @@
         <semi:SemiTheme Locale="en-US" />
         <semi:DataGridSemiTheme />
 
-        <!-- Use embedded Source Sans 3 as the default font for all controls -->
-        <Style Selector=":is(TemplatedControl)">
-            <Setter Property="FontFamily" Value="{DynamicResource DefaultFontFamily}"/>
-        </Style>
-        <Style Selector="TextBlock">
-            <Setter Property="FontFamily" Value="{DynamicResource DefaultFontFamily}"/>
-        </Style>
+        <!-- Use the default Semi.Avalonia font (Inter) for all controls -->
 
         <!-- Tab strip: smaller font size, adjust padding and margin -->
         <Style Selector="TabStripItem">

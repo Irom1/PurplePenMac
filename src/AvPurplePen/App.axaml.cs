@@ -29,7 +29,7 @@ namespace AvPurplePen
             RequestedThemeVariant = ThemeVariant.Light;
         }
 
-        public override async void OnFrameworkInitializationCompleted()
+        public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
                 MainWindowViewModel mainWindowViewModel = new MainWindowViewModel();
@@ -40,21 +40,21 @@ namespace AvPurplePen
                 };
                 desktop.MainWindow = mainWindow;
                 App.MainWindow = mainWindow;
+
+                // Show initial screen once the main window is fully opened
+                mainWindow.Opened += async (_, _) => { await ShowInitialScreenAsync(); };
             }
 
             base.OnFrameworkInitializationCompleted();
 
             ApplicationIdleService.Initialize();
-
-            // Show the initial/welcome screen after the main window is set up
-            await ShowInitialScreenIfNeeded();
         }
 
         /// <summary>
-        /// Shows the initial/welcome screen if no event is loaded (first launch).
-        /// Loops if the user creates a new event but cancels the wizard.
+        /// Shows the initial/welcome screen. Loops if the user creates a new
+        /// event but cancels the wizard. Exits if the user clicks Cancel.
         /// </summary>
-        private async Task ShowInitialScreenIfNeeded()
+        private static async Task ShowInitialScreenAsync()
         {
             while (true) {
                 var vm = new InitialScreenViewModel {
@@ -66,26 +66,25 @@ namespace AvPurplePen
                 };
 
                 var dialog = new InitialScreenDialog { DataContext = vm };
-                bool result = await dialog.ShowDialog<bool>(App.MainWindow!);
+                bool result = await dialog.ShowDialog<bool>(MainWindow!);
 
                 if (!result) {
-                    // User clicked Cancel — exit the app
                     Environment.Exit(0);
                     return;
                 }
 
-                if (App.MainWindow?.DataContext is MainWindowViewModel mainVm && mainVm.Controller != null) {
-                    var controller = mainVm.Controller;
+                if (MainWindow?.DataContext is MainWindowViewModel mainVm && mainVm.Controller != null) {
+                    var c = mainVm.Controller;
 
                     switch (vm.SelectedChoice) {
                         case InitialScreenChoice.NewEvent: {
                             var wizardVm = new NewEventWizardDialogViewModel();
                             bool wizardResult = await Services.DialogService.ShowDialogAsync(wizardVm);
                             if (wizardResult) {
-                                bool success = await controller.NewEvent(wizardVm.CreateEventInfo);
+                                bool success = await c.NewEvent(wizardVm.CreateEventInfo);
                                 if (success) return;
                             }
-                            continue; // Cancelled or failed — loop back
+                            continue;
                         }
 
                         case InitialScreenChoice.OpenExisting: {
@@ -95,18 +94,18 @@ namespace AvPurplePen
                             };
                             bool fileResult = await Services.DialogService.ShowDialogAsync(fileOpenVm);
                             if (fileResult && fileOpenVm.SelectedFile != null) {
-                                bool success = await controller.LoadNewFile(fileOpenVm.SelectedFile);
+                                bool success = await c.LoadNewFile(fileOpenVm.SelectedFile);
                                 if (success) return;
                             }
                             continue;
                         }
 
                         case InitialScreenChoice.OpenLast:
-                            await controller.LoadNewFile(UserSettings.Current.LastLoadedFile);
+                            await c.LoadNewFile(UserSettings.Current.LastLoadedFile);
                             return;
 
                         case InitialScreenChoice.OpenSample:
-                            await controller.LoadNewFile(SampleEventFileName());
+                            await c.LoadNewFile(SampleEventFileName());
                             return;
                     }
                 }
@@ -114,13 +113,9 @@ namespace AvPurplePen
             }
         }
 
-        /// <summary>
-        /// Returns the path to the sample event file bundled with the application.
-        /// </summary>
         private static string SampleEventFileName()
         {
             string baseDir = AppContext.BaseDirectory;
-            // Walk up from the bin output directory to find TestFiles
             return Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "..", "TestFiles", "SampleEvent2.ppen"));
         }
     }
