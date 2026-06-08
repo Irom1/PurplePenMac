@@ -22,6 +22,8 @@ namespace AvPurplePen
 
         public override void Initialize()
         {
+            // Set the app name for macOS menu bar (must happen before window creation)
+            Name = "Purple Pen";
             AvaloniaXamlLoader.Load(this);
 #if DEBUG
             this.AttachDeveloperTools();
