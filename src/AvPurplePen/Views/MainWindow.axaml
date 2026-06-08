@@ -39,6 +39,8 @@
     </Design.DataContext>
 
     <Window.KeyBindings>
+        <!-- Escape: cancel current mode or clear selection -->
+        <KeyBinding Gesture="Escape" Command="{Binding CancelCommand}"/>
         <!-- File -->
         <KeyBinding Gesture="Ctrl+O" Command="{Binding FileOpenPurplePenFileCommand}"/>
         <KeyBinding Gesture="Ctrl+S" Command="{Binding SaveCommand}"/>
