@@ -28,6 +28,12 @@ if [ -f "$SCRIPT_DIR/src/AvPurplePen/Assets/PurplePenIcon.png" ]; then
     cp "$SCRIPT_DIR/src/AvPurplePen/Assets/PurplePenIcon.png" "$APP_BUNDLE/Contents/Resources/PurplePen.icns"
 fi
 
+# Copy sample event files (ppen + map files)
+if [ -d "$SCRIPT_DIR/doc/userdocs/Sample" ]; then
+    cp "$SCRIPT_DIR/doc/userdocs/Sample/Sample Event.ppen" "$APP_BUNDLE/Contents/Resources/"
+    cp "$SCRIPT_DIR/doc/userdocs/Sample/SampleMap.ocd" "$APP_BUNDLE/Contents/Resources/"
+fi
+
 # Create Info.plist
 cat > "$APP_BUNDLE/Contents/Info.plist" << 'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>

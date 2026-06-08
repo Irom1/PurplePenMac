@@ -116,7 +116,16 @@ namespace AvPurplePen
         private static string SampleEventFileName()
         {
             string baseDir = AppContext.BaseDirectory;
-            return Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "..", "TestFiles", "SampleEvent2.ppen"));
+            // In the .app bundle, the sample is copied to Resources/
+            string resourcePath = Path.Combine(baseDir, "..", "Resources", "Sample Event.ppen");
+            if (File.Exists(resourcePath))
+                return Path.GetFullPath(resourcePath);
+            // Fallback: look relative to source tree (dev builds)
+            string devPath = Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "..", "doc", "userdocs", "Sample", "Sample Event.ppen"));
+            if (File.Exists(devPath))
+                return devPath;
+            // Second fallback: TestFiles
+            return Path.GetFullPath(Path.Combine(baseDir, "..", "..", "..", "..", "TestFiles", "mapdisplay", "SampleEvent.ppen"));
         }
     }
 }

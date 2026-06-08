@@ -2,6 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <AssemblyName>PurplePen</AssemblyName>
+    <ApplicationTitle>Purple Pen</ApplicationTitle>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <!-- app.manifest is a Windows-only artifact; skip it on other platforms to avoid build errors. -->

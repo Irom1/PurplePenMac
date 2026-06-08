@@ -89,6 +89,12 @@ namespace AvPurplePen.Views
         {
             var nativeMenu = new NativeMenu();
 
+            // === App Menu (macOS) — shows the app name next to Apple menu ===
+            var appMenu = new NativeMenuItem { Header = "Purple Pen" };
+            appMenu.Menu = new NativeMenu();
+            appMenu.Menu.Add(CreateItem("About Purple Pen", vm.ShowAboutDialogCommand));
+            nativeMenu.Add(appMenu);
+
             // === File Menu ===
             var fileMenu = new NativeMenuItem { Header = UIText.MainFrame_fileMenu_Text };
             fileMenu.Menu = new NativeMenu();
