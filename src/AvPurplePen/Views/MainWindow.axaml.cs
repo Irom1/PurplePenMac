@@ -89,12 +89,6 @@ namespace AvPurplePen.Views
         {
             var nativeMenu = new NativeMenu();
 
-            // === App Menu (macOS) — shows the app name next to Apple menu ===
-            var appMenu = new NativeMenuItem { Header = "Purple Pen" };
-            appMenu.Menu = new NativeMenu();
-            appMenu.Menu.Add(CreateItem("About Purple Pen", vm.ShowAboutDialogCommand));
-            nativeMenu.Add(appMenu);
-
             // === File Menu ===
             var fileMenu = new NativeMenuItem { Header = UIText.MainFrame_fileMenu_Text };
             fileMenu.Menu = new NativeMenu();
@@ -499,6 +493,72 @@ namespace AvPurplePen.Views
             }
         }
 
+
+        // Mouse activity on the topology/ordering map viewer.
+        private async void TopologyViewer_MouseActivity(object? sender, MapViewer.FancyMouseEventArgs e)
+        {
+            MainWindowViewModel? vm = this.DataContext as MainWindowViewModel;
+            if (vm?.Controller == null) return;
+
+            if (e.Button != MouseButton.Left && e.Button != MouseButton.Right && e.FancyAction != MapViewer.FancyMouseAction.Move)
+                return;
+
+            bool isRightButton = (e.Button == MouseButton.Right);
+            PointF location = Conv.ToPointF(e.WorldLocation);
+            float pixelSize = mapViewerTopology.PixelSize;
+            var c = vm.Controller;
+            var pane = Pane.Topology;
+
+            switch (e.FancyAction) {
+            case MapViewer.FancyMouseAction.Move:
+                c.MouseMoved(pane, location, pixelSize);
+                break;
+            case MapViewer.FancyMouseAction.Down:
+                e.MouseDownResult = isRightButton
+                    ? DragActionToResult(c.RightButtonDown(pane, location, pixelSize))
+                    : DragActionToResult(c.LeftButtonDown(pane, location, pixelSize));
+                break;
+            case MapViewer.FancyMouseAction.Click:
+                if (isRightButton)
+                    _ = c.RightButtonClick(pane, location, pixelSize);
+                else
+                    _ = c.LeftButtonClick(pane, location, pixelSize);
+                break;
+            case MapViewer.FancyMouseAction.Drag:
+                if (isRightButton)
+                    c.RightButtonDrag(pane, location, Conv.ToPointF(e.WorldDragStart), pixelSize);
+                else
+                    c.LeftButtonDrag(pane, location, Conv.ToPointF(e.WorldDragStart), pixelSize);
+                break;
+            case MapViewer.FancyMouseAction.DragEnd:
+                if (isRightButton)
+                    _ = c.RightButtonEndDrag(pane, location, Conv.ToPointF(e.WorldDragStart), pixelSize);
+                else
+                    _ = c.LeftButtonEndDrag(pane, location, Conv.ToPointF(e.WorldDragStart), pixelSize);
+                break;
+            case MapViewer.FancyMouseAction.Up:
+                if (isRightButton) c.RightButtonUp(pane, location, pixelSize);
+                else c.LeftButtonUp(pane, location, pixelSize);
+                break;
+            case MapViewer.FancyMouseAction.DragCancel:
+                if (isRightButton) c.RightButtonCancelDrag(pane);
+                else c.LeftButtonCancelDrag(pane);
+                break;
+            case MapViewer.FancyMouseAction.Hover:
+                if (vm.ShowToolTips && c.GetToolTip(pane, location, pixelSize, out string tip, out string title))
+                    vm.HoverTooltipText = string.IsNullOrEmpty(title) ? tip : $"{title}\n{tip}";
+                break;
+            }
+        }
+
+        private static MapViewer.MouseDownResult DragActionToResult(DragAction action) => action switch {
+            DragAction.None => MapViewer.MouseDownResult.None,
+            DragAction.SuppressClick => MapViewer.MouseDownResult.SuppressClick,
+            DragAction.MapDrag => MapViewer.MouseDownResult.ImmediatePan,
+            DragAction.ImmediateDrag => MapViewer.MouseDownResult.ImmediateDrag,
+            DragAction.DelayedDrag => MapViewer.MouseDownResult.DelayedDrag,
+            _ => MapViewer.MouseDownResult.None
+        };
 
         // This is called when the application becomes idle after processing input. We can use this to update
         // the UI in response to changes that may have occurred.

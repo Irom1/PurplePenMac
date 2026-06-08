@@ -826,6 +826,7 @@
                             <views:MapViewer x:Name="mapViewerTopology" Grid.Column="0"
                                              MapDisplay="{Binding TopologyMapDisplay}"
                                              MapHighlights="{Binding TopologyMapHighlights}"
+                                             FancyMouseActivity="TopologyViewer_MouseActivity"
                                              Tag="Topology"
                                              Cursor="{StaticResource Arrow}"/>
 

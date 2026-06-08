@@ -57,9 +57,9 @@ public partial class MapViewer : UserControl
         public ulong DownTime;        // Timestamp (ms) when the button went down.
     }
 
-    private const float MinDragDistance = 2.8f;   // Minimum pixel distance to start a drag.
-    private const float MaxClickDistance = 1.7f;   // Maximum pixel distance to still count as a click.
-    private const int MaxClickTime = 300;          // Maximum milliseconds for a press-release to be a click.
+    private const float MinDragDistance = 6f;     // Minimum pixel distance to start a drag (higher for trackpad tolerance).
+    private const float MaxClickDistance = 4f;     // Maximum pixel distance to still count as a click.
+    private const int MaxClickTime = 400;          // Maximum milliseconds for a press-release to be a click.
     private const int HoverDelayMs = 400;          // Milliseconds of stillness before a hover event fires.
 
     private const int LeftButton = 0;
