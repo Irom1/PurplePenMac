@@ -18,7 +18,6 @@
         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto">
             <TextBox Grid.Column="0"
                      Text="{Binding MapFileName}"
-                     IsReadOnly="True"
                      Margin="0,0,8,0"
                      Watermark="{resx:Localize NewEventMapFile_Watermark}"/>
             <Button Grid.Column="1"

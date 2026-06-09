@@ -51,7 +51,7 @@ namespace PurplePen.ViewModels
         public bool CanGoBack => pageIndex > 0;
         public bool CanGoNext => CurrentPage?.CanProceed == true;
         public bool IsOnLastPage => pageIndex == GetPageList().Count - 1;
-        public string NextButtonText => IsOnLastPage ? MiscText.FinishButtonText : MiscText.NextButtonText;
+        public string NextButtonText => (IsOnLastPage ? MiscText.FinishButtonText : MiscText.NextButtonText).Replace("&", "");
 
         public NewEventWizardDialogViewModel()
         {
